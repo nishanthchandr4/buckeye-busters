@@ -1,6 +1,6 @@
 #include <FEH.h>
 #include <Arduino.h>
-
+#include <FEHMotor.h>
 
 // Declare things like Motors, Servos, etc. here
 // For example:
