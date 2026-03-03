@@ -7,12 +7,48 @@
 // FEHMotor leftMotor(FEHMotor::Motor0, 6.0);
 // FEHServo servo(FEHServo::Servo0);
 
+// Declarations for analog optosensors
+DigitalEncoder right_encoder (FEHIO:: Pin13);
+DigitalEncoder left_encoder (FEHIO:: Pin14);
+
+FEHMotor right_motor(FEHMotor:: Motor0, 9.0);
+FEHMotor left_motor(FEHMotor:: Motor1, 9.0); 
+
+void move_front_back(int percent, int counts) //using encoders
+{
+    //Reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    //Set both motors to desired percent
+    right_motor.SetPercent(percent);
+    left_motor.SetPercent(percent);
+
+    //While the average of the left and right encoder is less than counts,
+    //keep running motors
+    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
+
+    //Turn off motors
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+void test1()
+{
+    //move
+        move_front_back(50, 1000); //move forward at 50% power for 1000 encoder counts
+}
+
+void test2()
+{
+    move_front_back(60, 1000);
+    move_front_back(-30, 500);
+}
 
 void ERCMain()
 {
     // Your code here!
-
-    // Or just use the TestGUI function
-    TestGUI();
+    test1();
+    test2();
 
 }
