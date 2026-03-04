@@ -56,23 +56,25 @@ void turn_right(int percent, int counts) //using encoders
 void test1()
 {
     //move
-        move_forward(40, 100); 
+        move_forward(40, 1285); 
 }
 void test2()
 {
-    move_forward(60, 100);
-    turn_right(20, 50);
-    move_forward(30, 100);
+    move_forward(40, 1100);
+    //turn_right(20, 850);
+    move_forward(-40, 1100);
 }
 
 void ERCMain()
 {
+
+    
         
-    test1();
+    //test1();
 
 
     
     
-    //test2();
+    test2();
 
 }
