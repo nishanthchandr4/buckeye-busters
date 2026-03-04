@@ -69,12 +69,12 @@ void ERCMain()
 {
 
     
-        
+    //test 1 going to the other wall comxment this out when doing test 2
     test1();
 
 
     
-    
-    //test2();
+    //test 2 going up and down the ramp comment this out when doing test 1
+    test2();
 
 }
