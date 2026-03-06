@@ -60,7 +60,7 @@ void test1()
 }
 void test2()
 {
-    move_forward(40, 1100);
+    move_forward(40, 1200);
     //turn_right(20, 850);
     move_forward(-40, 1100);
 }
@@ -70,7 +70,7 @@ void ERCMain()
 
     
     //test 1 going to the other wall comxment this out when doing test 2
-    test1();
+    //test1();
 
 
     
