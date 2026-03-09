@@ -53,12 +53,12 @@ void turn_right(int percent, int counts) //using encoders
     left_motor.Stop();
 }
 
-void test1()
+void milestone1part1()
 {
     //move
         move_forward(40, 1285); 
 }
-void test2()
+void milestone1part2()
 {
     move_forward(40, 1200);
     //turn_right(20, 850);
@@ -69,12 +69,6 @@ void ERCMain()
 {
 
     
-    //test 1 going to the other wall comxment this out when doing test 2
-    //test1();
-
-
     
-    //test 2 going up and down the ramp comment this out when doing test 1
-    test2();
 
 }
