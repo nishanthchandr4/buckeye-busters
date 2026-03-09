@@ -72,16 +72,28 @@ void test2()
 
 void ERCMain()
 {
+    //wait till cds cell reads input from the floor starting 
+
+    //move backwards immediatly to click the start button
+
+    //drive up the ramp to the second floor and initiate line folowwing
+
+    //flow the lines and once all three optosensors are underblack tape
+
+    //move set amount using shaft encoding to read the light on the floor
+
+    //determine the color of the light and hit the correct button
+
+    //drive back to the bottom floor and hit the final button. 
 
     
     //test 1 going to the other wall comxment this out when doing test 2
     //test1();
-
-
-    
+ 
     //test 2 going up and down the ramp comment this out when doing test 1
     //test2();
-    
+
+    //move this to a different file adin everything bellow this comment
     //exploration 3 code
 
     // Declare variables.
