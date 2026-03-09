@@ -69,12 +69,9 @@ void test2()
     //turn_right(20, 850);
     move_forward(-40, 1100);
 }
+
 void ERCMain()
 {
-    TestGUI();
-}
-//void ERCMain()
-//{
 
     
     //test 1 going to the other wall comxment this out when doing test 2
@@ -89,7 +86,7 @@ void ERCMain()
 
     // Declare variables.
     // For touchscreen functionality.
-    /*int touch_x, touch_y;
+    int touch_x, touch_y;
     // Loop n through points to record necessary positions.
     int n;
     char points[4] = {'A', 'B', 'C', 'D'};
@@ -156,5 +153,4 @@ void ERCMain()
 
     // Close SD file
     SD.FClose(fptr);
-    */
-//}
+}
