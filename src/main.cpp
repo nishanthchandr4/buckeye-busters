@@ -7,6 +7,8 @@
 #include <FEHRCS.h>
 #include <FEHUtility.h>
 
+//24.5 inches equal 1000 counts at 40%
+
 // Declare things like Motors, Servos, etc. here
 // For example:
 // FEHMotor leftMotor(FEHMotor::Motor0, 6.0);
@@ -28,6 +30,71 @@ AnalogInputPin left_opto(FEHIO::Pin2);
 AnalogInputPin middle_opto(FEHIO::Pin1);
 AnalogInputPin right_opto(FEHIO::Pin0);
 
+
+enum LineStates {
+    MIDDLE,
+    RIGHT,
+    LEFT
+};
+
+void follow_optosensor()
+{
+    LineStates state = MIDDLE;
+    
+    while (true) {
+
+        bool rightOnTape  = right_opto.Value()  > 4.0;
+        bool leftOnTape   = left_opto.Value()   > 4.0;
+        bool middleOnTape = middle_opto.Value() > 4.0;
+
+        if (rightOnTape && leftOnTape && middleOnTape) {
+            right_motor.Stop();
+            left_motor.Stop();
+            return;
+        }
+
+        switch (state) {
+
+            case MIDDLE:
+                right_motor.SetPercent(20);
+                left_motor.SetPercent(20);
+
+                if (right_opto.Value() > 3.6) {
+                    state = RIGHT;
+                } else if (left_opto.Value() > 3.6) {
+                    state = LEFT;
+                }
+                break;
+
+            case RIGHT:
+                right_motor.SetPercent(5);
+                left_motor.SetPercent(30);
+
+                if (right_opto.Value() < 4.0) {
+                    state = MIDDLE;
+                }
+                break;
+
+            case LEFT:
+                right_motor.SetPercent(30);
+                left_motor.SetPercent(5);
+
+                if (left_opto.Value() < 4.0) {
+                    state = MIDDLE;
+                }
+                break;
+
+            default:
+                right_motor.Stop();
+                left_motor.Stop();
+                break;
+        }
+        Sleep(0.02);
+    }
+
+    right_motor.Stop();
+    left_motor.Stop();
+}
 
 //input a negative percent if you want to move backwards
 void move_forward(int percent, int counts) //using encoders
@@ -85,62 +152,6 @@ void turn_left(int percent, int counts) //using encoders
     right_motor.Stop();
     left_motor.Stop();
 }
-enum LineStates {
-    MIDDLE,
-    RIGHT,
-    LEFT
-};
-
-void follor_optosensor(float time)
-{
-    LineStates state = MIDDLE;
-    float threshold = 1.5;
-    float startTime = TimeNow();
-
-    while (TimeNow() - startTime < time) {
-        switch (state) {
-
-            case MIDDLE:
-                right_motor.SetPercent(60);
-                left_motor.SetPercent(60);
-
-                if (right_opto.Value() > threshold) {
-                    state = RIGHT;
-                } else if (left_opto.Value() > threshold) {
-                    state = LEFT;
-                }
-                break;
-
-            case RIGHT:
-                right_motor.SetPercent(30);
-                left_motor.SetPercent(60);
-
-                if (middle_opto.Value() > threshold) {
-                    state = MIDDLE;
-                }
-                break;
-
-            case LEFT:
-                right_motor.SetPercent(60);
-                left_motor.SetPercent(30);
-
-                if (middle_opto.Value() > threshold) {
-                    state = MIDDLE;
-                }
-                break;
-
-            default:
-                right_motor.Stop();
-                left_motor.Stop();
-                break;
-        }
-
-        Sleep(0.05);
-    }
-
-    right_motor.Stop();
-    left_motor.Stop();
-}
 
 
 void test1()
@@ -157,44 +168,59 @@ void test2()
 
 void ERCMain()
 {
-    //wait till cds cell reads input from the floor starting 
-    while(cds_cell.Value() < 1.5){
-        //wait till light turns on 
-        //1.5 might need to be changed depending on the light on the floor, test this value before running the rest of the code
-    }
 
-    //move backwards immediatly to click the start button
-    move_forward(-40, 200);//moves backwards to hit the button change 200 accordingly to the distance needed to hit the button, 40 can be changed for speed keep it negative
+    // ─── WAIT FOR START LIGHT ───────────────────────────────────────────────
+    while (cds_cell.Value() > 1.2) {
+        // waiting for start light to turn on
+    } 
+    // ─── HIT START BUTTON ───────────────────────────────────────────────────
+    move_forward(-40, 50);  // reverse into start button
+    move_forward(40, 55);   // move back forward
 
+    // ─── NAVIGATE TO RAMP ───────────────────────────────────────────────────
+    turn_right(20, 219);
+    move_forward(40, 1700);
+    turn_left(20, 437);
+    move_forward(-40, 300);
+    Sleep(2);
+    move_forward(30, 440);
+    follow_optosensor();
+    LCD.Write("finished following optosensor");
+    move_forward(40, 139);
 
-    //drive up the ramp to the second floor and initiate line folowwing
-    turn_right(20, 850); //turn right to face the ramp change 850 accordingly to the degree needed to turn, 20 can be changed for speed
-    move_forward(40, 1200); //move forward up the ramp change 1200 accordingly to the distance needed to get up the ramp, 40 can be changed for speed
-
-    //flow the lines and once all three optosensors are underblack tape
-    follow_optosensor(some time);
-
-    //move set amount using shaft encoding to read the light on the floor
-    //change 100 based on measured distance from when optosensor stops and the light on the floor
-    move_forward(10, 100)
-
-    //determine the color of the light and hit the correct button
-    if(light is blue){
-        //hit right button;
-    } else(light is red) {
-        //hit the left button
-    }
-
-    //drive back to the bottom floor and hit the final button. 
-    turn_right(40, 850);//turn 180 degrees
-    follow_optosensor(120); //follow the lines back to the ramp
-    move_forward(60, 1200);//move back to starting position and hit the end button.
-
-
+    Sleep(2); 
     
-    //test 1 going to the other wall comxment this out when doing test 2
-    //test1();
- 
-    //test 2 going up and down the ramp comment this out when doing test 1
-    //test2();
+
+    float cdsValue = cds_cell.Value();
+    LCD.Write("cds value: ");
+    LCD.Write(cdsValue);
+
+    if(cdsValue < 0.48) { //red light
+        LCD.Write("red light: ");
+        LCD.Write(cdsValue);
+        turn_right(20,219);
+        move_forward(40, 50);
+        turn_left(20, 205);
+        move_forward(40, 244);
+    } else if(cds_cell.Value() > 0.48 && cds_cell.Value() < 1.0) { //blue light
+        LCD.Write("blue light: ");
+        LCD.Write(cdsValue);
+        turn_left(20, 219);
+        move_forward(40, 20);
+        turn_right(20, 219);
+        move_forward(40, 244);
+    } 
+    move_forward(-40, 1061);
+    move_forward(40, 60);
+    turn_left(40, 490);
+    //turn_right(20, 219);
+    //move forwARD
+    //MOVERIGHT
+    move_forward(80, 2100);
+    turn_left(100, 200);
+    
+  
+    
+    
+    
 }
