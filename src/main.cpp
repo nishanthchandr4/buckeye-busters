@@ -6,6 +6,8 @@
 #include <FEHSD.h>
 #include <FEHRCS.h>
 #include <FEHUtility.h>
+#include <FEHRCS.h>
+#include <FEHServo.h>
 
 //24.5 inches equal 1000 counts at 40%
 
@@ -30,6 +32,9 @@ AnalogInputPin left_opto(FEHIO::Pin2);
 AnalogInputPin middle_opto(FEHIO::Pin1);
 AnalogInputPin right_opto(FEHIO::Pin0);
 
+//servo arm
+FEHServo arm_servo(FEHServo::Servo0); 
+
 
 enum LineStates {
     MIDDLE,
@@ -37,11 +42,12 @@ enum LineStates {
     LEFT
 };
 
-void follow_optosensor()
+void follow_optosensor(float time)
 {
     LineStates state = MIDDLE;
+    float timeNow = TimeNow();
     
-    while (true) {
+    while (timeNow - TimeNow() >= time) {
 
         bool rightOnTape  = right_opto.Value()  > 4.0;
         bool leftOnTape   = left_opto.Value()   > 4.0;
@@ -90,6 +96,7 @@ void follow_optosensor()
                 break;
         }
         Sleep(0.02);
+
     }
 
     right_motor.Stop();
@@ -169,6 +176,7 @@ void test2()
 void ERCMain()
 {
 
+
     // ─── WAIT FOR START LIGHT ───────────────────────────────────────────────
     while (cds_cell.Value() > 1.2) {
         // waiting for start light to turn on
@@ -178,13 +186,32 @@ void ERCMain()
     move_forward(40, 55);   // move back forward
 
     // ─── NAVIGATE TO RAMP ───────────────────────────────────────────────────
-    turn_right(20, 219);
-    move_forward(40, 1700);
+    arm_servo.SetDegree(0); //arm in up position
+    move_forward(40, 490); //move forward to the line following
+    follow_optosensor(5.0);
+    arm_servo.SetDegree(79); //set arm to down position getting ready to pick up
+    move_forward(40, 100);
+    turn_left(20, 20);
+    arm_servo.SetDegree(25); //arm in up position
+    turn_right(-20, 40);
+
+    
+
+
+
+
+//rotate before window
     turn_left(20, 437);
     move_forward(-40, 300);
     Sleep(2);
-    move_forward(30, 440);
-    follow_optosensor();
+    move_forward(30, 1000);
+    move_forward(-30, 500);
+
+ 
+ 
+
+    
+   /*  follow_optosensor();
     LCD.Write("finished following optosensor");
     move_forward(40, 139);
 
@@ -218,7 +245,7 @@ void ERCMain()
     //MOVERIGHT
     move_forward(80, 2100);
     turn_left(100, 200);
-    
+     */
   
     
     
