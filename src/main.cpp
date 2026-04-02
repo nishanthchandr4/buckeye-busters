@@ -21,8 +21,8 @@ DigitalEncoder right_encoder (FEHIO:: Pin13);
 DigitalEncoder left_encoder (FEHIO:: Pin14);
 
 //declarations for motors
-FEHMotor right_motor(FEHMotor:: Motor0, 9.0);
-FEHMotor left_motor(FEHMotor:: Motor1, 9.0);
+FEHMotor right_motor(FEHMotor:: Motor3, 9.0);
+FEHMotor left_motor(FEHMotor:: Motor0, 9.0);
 
 //declarations for CdS Cell
 AnalogInputPin cds_cell(FEHIO::Pin3);
@@ -172,21 +172,63 @@ void test2()
     //turn_right(20, 850);
     move_forward(-40, 1100);
 }
+#define PULSE_POWER 20
+#define PULSE_TIME 0.1
+#define RCS_WAIT_TIME_IN_SEC 0.3
+
+void check_heading(float heading)
+{
+    RCSPose* pose = RCS.RequestPosition();
+
+    // Wait until a valid heading is received
+    while(pose->heading == -1)
+    {
+        Sleep(RCS_WAIT_TIME_IN_SEC);
+        pose = RCS.RequestPosition();
+    }
+
+    // Keep correcting until within 2 degrees of target
+    while(pose->heading != -1 && (pose->heading < heading - 2 || pose->heading > heading + 2))
+    {
+        // Special case: handle wrap-around near 0/360 degrees
+        // e.g. target is 0, robot reads 355 — that's only 5 degrees off, not 355
+        float diff = heading - pose->heading;
+        if(diff > 180)  diff -= 360;
+        if(diff < -180) diff += 360;
+
+        if(diff > 0)
+        {
+            // Need to turn counterclockwise
+            right_motor.SetPercent(PULSE_POWER);
+            left_motor.SetPercent(-PULSE_POWER);
+        }
+        
+
+        Sleep(PULSE_TIME);
+        right_motor.Stop();
+        left_motor.Stop();
+
+        Sleep(RCS_WAIT_TIME_IN_SEC);
+        pose = RCS.RequestPosition();
+    }
+}
+
 
 void ERCMain()
 {
-
+    //RCS.GetLever();
+    int lever_heading = 100;
 
     // ─── WAIT FOR START LIGHT ───────────────────────────────────────────────
-    while (cds_cell.Value() > 1.2) {
+    //while (cds_cell.Value() > 1.2) {
         // waiting for start light to turn on
-    } 
+    //} 
     // ─── HIT START BUTTON ───────────────────────────────────────────────────
     move_forward(-40, 50);  // reverse into start button
     move_forward(40, 55);   // move back forward
 
     // ─── NAVIGATE TO RAMP ───────────────────────────────────────────────────
-    arm_servo.SetDegree(0); //arm in up position
+    /*arm_servo.SetDegree(0); //arm in up position
     move_forward(40, 490); //move forward to the line following
     follow_optosensor(5.0);
     arm_servo.SetDegree(79); //set arm to down position getting ready to pick up
@@ -194,19 +236,39 @@ void ERCMain()
     turn_left(20, 20);
     arm_servo.SetDegree(25); //arm in up position
     turn_right(-20, 40);
+    */
 
-    
+    // off wall to table
+    turn_right(20, 90);
+    move_forward(40, 660);
+    move_forward(-40, 100);
+    turn_left(20, 90);
+    if (RCS.GetLever() == 0) { //left lever
+        move_forward(40, 380);
+        turn_right(20, 45);
+        check_heading(lever_heading);
+    } else if (RCS.GetLever() == 1) { //middle lever
+        move_forward(40, 280);
+        turn_right(20, 45);
+        check_heading(lever_heading);
+
+    } else if (RCS.GetLever() == 2) { //right lever
+        move_forward(40, 160);
+        turn_right(20, 45);
+        check_heading(lever_heading);
+    }
+
 
 
 
 
 //rotate before window
-    turn_left(20, 437);
+    /* turn_left(20, 437);
     move_forward(-40, 300);
     Sleep(2);
     move_forward(30, 1000);
     move_forward(-30, 500);
-
+*/
  
  
 
