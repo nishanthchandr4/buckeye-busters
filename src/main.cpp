@@ -9,7 +9,8 @@
 #include <FEHRCS.h>
 #include <FEHServo.h>
 
-//24.5 inches equal 1000 counts at 40%
+//250 counts at 12.5 at 40% motor percent
+//1 encoder count per degree for turning
 
 // Declare things like Motors, Servos, etc. here
 // For example:
@@ -44,10 +45,11 @@ enum LineStates {
 
 void follow_optosensor(float time)
 {
+
     LineStates state = MIDDLE;
     float timeNow = TimeNow();
     
-    while (timeNow - TimeNow() >= time) {
+    while (TimeNow() - timeNow < time) {
 
         bool rightOnTape  = right_opto.Value()  > 4.0;
         bool leftOnTape   = left_opto.Value()   > 4.0;
@@ -106,17 +108,41 @@ void follow_optosensor(float time)
 //input a negative percent if you want to move backwards
 void move_forward(int percent, int counts) //using encoders
 {
+    int rightPercent = percent;
+    int leftPercent = percent;
     //Reset encoder counts
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
 
     //Set both motors to desired percent
-    right_motor.SetPercent(percent);
-    left_motor.SetPercent(percent);
+    right_motor.SetPercent(0);
+    left_motor.SetPercent(0);
+    right_motor.SetPercent(rightPercent);
+    left_motor.SetPercent(leftPercent);
 
     //While the average of the left and right encoder is less than counts,
     //keep running motors
-    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
+    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts)
+    {
+        /* if(left_encoder.Counts() > right_encoder.Counts()) {
+            if (rightPercent<=80)
+            {
+                rightPercent+=5;
+                leftPercent -=5;
+                right_motor.SetPercent(rightPercent);
+                left_motor.SetPercent(leftPercent);
+            }
+
+        } else if (right_encoder.Counts() > left_encoder.Counts()) {
+            if (leftPercent<=80)
+            {
+                rightPercent+=5;
+                leftPercent -=5;
+                right_motor.SetPercent(rightPercent);
+                left_motor.SetPercent(leftPercent);
+            }
+        } */
+    }
 
     //Turn off motors
     right_motor.Stop();
@@ -125,6 +151,9 @@ void move_forward(int percent, int counts) //using encoders
 
 void turn_right(int percent, int counts) //using encoders
 {
+    right_motor.SetPercent(0);
+    left_motor.SetPercent(0);
+
     //Reset encoder counts
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -145,6 +174,8 @@ void turn_right(int percent, int counts) //using encoders
 
 void turn_left(int percent, int counts) //using encoders
 {
+    right_motor.SetPercent(0);
+    left_motor.SetPercent(0);
     //Reset encoder counts
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -176,29 +207,28 @@ void test2()
 void ERCMain()
 {
 
-
-    // ─── WAIT FOR START LIGHT ───────────────────────────────────────────────
+     
     while (cds_cell.Value() > 1.2) {
         // waiting for start light to turn on
     } 
-    // ─── HIT START BUTTON ───────────────────────────────────────────────────
+    // ─── HIT START BUTTON ─────────────────────────────────────────────────── 
     move_forward(-40, 50);  // reverse into start button
-    move_forward(40, 55);   // move back forward
 
+
+    move_forward(40, 50);   // move back forward
     // ─── NAVIGATE TO RAMP ───────────────────────────────────────────────────
     arm_servo.SetDegree(0); //arm in up position
-    move_forward(40, 490); //move forward to the line following
-    follow_optosensor(5.0);
+    move_forward(40, 500); //move forward to the line following
+    turn_left(20, 54); //turn right to line up with line following
+    move_forward(-40, 75);
     arm_servo.SetDegree(79); //set arm to down position getting ready to pick up
-    move_forward(40, 100);
-    turn_left(20, 20);
-    arm_servo.SetDegree(25); //arm in up position
-    turn_right(-20, 40);
+  
+   
 
     
 
 
-
+/*
 
 //rotate before window
     turn_left(20, 437);
@@ -208,7 +238,7 @@ void ERCMain()
     move_forward(-30, 500);
 
  
- 
+ */ 
 
     
    /*  follow_optosensor();
