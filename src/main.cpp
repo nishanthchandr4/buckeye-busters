@@ -217,33 +217,38 @@ void check_heading(float heading)
 void ERCMain()
 {
     //RCS.GetLever();
-    int lever_heading = 100;
+    //int lever_heading = 100;
 
     // ─── WAIT FOR START LIGHT ───────────────────────────────────────────────
-    //while (cds_cell.Value() > 1.2) {
+    while (cds_cell.Value() > 1.2) {
         // waiting for start light to turn on
-    //} 
+    } 
     // ─── HIT START BUTTON ───────────────────────────────────────────────────
     move_forward(-40, 50);  // reverse into start button
     move_forward(40, 55);   // move back forward
 
     // ─── NAVIGATE TO RAMP ───────────────────────────────────────────────────
-    /*arm_servo.SetDegree(0); //arm in up position
-    move_forward(40, 490); //move forward to the line following
-    follow_optosensor(5.0);
-    arm_servo.SetDegree(79); //set arm to down position getting ready to pick up
-    move_forward(40, 100);
-    turn_left(20, 20);
+    arm_servo.SetDegree(0); //arm in up position
+    move_forward(40, 460); //move forward to the line following
+    move_forward(-40, 100); //move back a little bit to make sure optosensors can read line
+    //follow_optosensor(5.0);
+    //arm_servo.SetDegree(79); //set arm to down position getting ready to pick up
+    turn_left(20, 55);
+    move_forward(-40, 75);
+    arm_servo.SetDegree(79); //arm in down position
+    move_forward(20, 75);
+    //turn_left(20, 20);
     arm_servo.SetDegree(25); //arm in up position
-    turn_right(-20, 40);
-    */
+    //turn_right(-20, 40);
+    move_forward(-40, 520);
 
     // off wall to table
     turn_right(20, 90);
     move_forward(40, 660);
+    arm_servo.SetDegree(79); //arm in down position
     move_forward(-40, 100);
     turn_left(20, 90);
-    if (RCS.GetLever() == 0) { //left lever
+    /* if (RCS.GetLever() == 0) { //left lever
         move_forward(40, 380);
         turn_right(20, 45);
         check_heading(lever_heading);
@@ -259,7 +264,7 @@ void ERCMain()
     }
 
 
-
+*/
 
 
 //rotate before window
