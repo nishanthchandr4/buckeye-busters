@@ -9,7 +9,8 @@
 #include <FEHRCS.h>
 #include <FEHServo.h>
 
-//24.5 inches equal 1000 counts at 40%
+//250 counts at 12.5 at 40% motor percent
+//1 encoder count per degree for turning
 
 // Declare things like Motors, Servos, etc. here
 // For example:
@@ -44,10 +45,11 @@ enum LineStates {
 
 void follow_optosensor(float time)
 {
+
     LineStates state = MIDDLE;
     float timeNow = TimeNow();
     
-    while (timeNow - TimeNow() >= time) {
+    while (TimeNow() - timeNow < time) {
 
         bool rightOnTape  = right_opto.Value()  > 4.0;
         bool leftOnTape   = left_opto.Value()   > 4.0;
@@ -106,17 +108,41 @@ void follow_optosensor(float time)
 //input a negative percent if you want to move backwards
 void move_forward(int percent, int counts) //using encoders
 {
+    int rightPercent = percent;
+    int leftPercent = percent;
     //Reset encoder counts
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
 
     //Set both motors to desired percent
-    right_motor.SetPercent(percent);
-    left_motor.SetPercent(percent);
+    right_motor.SetPercent(0);
+    left_motor.SetPercent(0);
+    right_motor.SetPercent(rightPercent);
+    left_motor.SetPercent(leftPercent);
 
     //While the average of the left and right encoder is less than counts,
     //keep running motors
-    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
+    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts)
+    {
+        /* if(left_encoder.Counts() > right_encoder.Counts()) {
+            if (rightPercent<=80)
+            {
+                rightPercent+=5;
+                leftPercent -=5;
+                right_motor.SetPercent(rightPercent);
+                left_motor.SetPercent(leftPercent);
+            }
+
+        } else if (right_encoder.Counts() > left_encoder.Counts()) {
+            if (leftPercent<=80)
+            {
+                rightPercent+=5;
+                leftPercent -=5;
+                right_motor.SetPercent(rightPercent);
+                left_motor.SetPercent(leftPercent);
+            }
+        } */
+    }
 
     //Turn off motors
     right_motor.Stop();
@@ -125,6 +151,9 @@ void move_forward(int percent, int counts) //using encoders
 
 void turn_right(int percent, int counts) //using encoders
 {
+    right_motor.SetPercent(0);
+    left_motor.SetPercent(0);
+
     //Reset encoder counts
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -145,6 +174,8 @@ void turn_right(int percent, int counts) //using encoders
 
 void turn_left(int percent, int counts) //using encoders
 {
+    right_motor.SetPercent(0);
+    left_motor.SetPercent(0);
     //Reset encoder counts
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -218,36 +249,68 @@ void ERCMain()
 {
     //RCS.GetLever();
     //int lever_heading = 100;
-
+    //TestGUI();
     // ─── WAIT FOR START LIGHT ───────────────────────────────────────────────
-    while (cds_cell.Value() > 1.2) {
+     while (cds_cell.Value() > 1.2) {
         // waiting for start light to turn on
     } 
-    // ─── HIT START BUTTON ───────────────────────────────────────────────────
+    // ─── HIT START BUTTON ─────────────────────────────────────────────────── 
     move_forward(-40, 50);  // reverse into start button
-    move_forward(40, 55);   // move back forward
 
+
+    move_forward(40, 50);   // move back forward
     // ─── NAVIGATE TO RAMP ───────────────────────────────────────────────────
     arm_servo.SetDegree(0); //arm in up position
     move_forward(40, 460); //move forward to the line following
     move_forward(-40, 100); //move back a little bit to make sure optosensors can read line
     //follow_optosensor(5.0);
     //arm_servo.SetDegree(79); //set arm to down position getting ready to pick up
-    turn_left(20, 55);
-    move_forward(-40, 75);
+    turn_left(20, 51);
+    move_forward(-40, 100);
     arm_servo.SetDegree(79); //arm in down position
-    move_forward(20, 75);
+    Sleep(0.5);
+    move_forward(20, 148);
+    Sleep(0.5);
     //turn_left(20, 20);
+    /*for (int i = 0; i < 5; i++) {
+        arm_servo.SetDegree(79);
+        Sleep(0.5);
+    }*/
     arm_servo.SetDegree(25); //arm in up position
     //turn_right(-20, 40);
-    move_forward(-40, 520);
+    move_forward(-20, 80);
+    turn_right(20, 30);
+    move_forward(-40, 320);
+    turn_left(20, 15);
+    move_forward(-40, 260);
+
 
     // off wall to table
+    move_forward(20, 43);
     turn_right(20, 90);
-    move_forward(40, 660);
+    turn_left(40, 25);
+    move_forward(20, 60);
+    turn_right(40, 30);
+    move_forward(60, 520);
+    Sleep(0.5);
+    turn_left(40, 15);
+    move_forward(20, 100);
+    
+    Sleep(1);
     arm_servo.SetDegree(79); //arm in down position
+    Sleep(0.5);
     move_forward(-40, 100);
     turn_left(20, 90);
+    move_forward(40, 380);
+    turn_right(20,45);
+    arm_servo.SetDegree(25); //arm in up position
+    //move_forward(40, 200);
+    arm_servo.SetDegree(79); //arm in down position
+    move_forward(-40, 100);
+    move_forward(40, 100);
+    arm_servo.SetDegree(25); //arm in up position
+    Sleep(0.5);
+
     /* if (RCS.GetLever() == 0) { //left lever
         move_forward(40, 380);
         turn_right(20, 45);
@@ -266,6 +329,8 @@ void ERCMain()
 
 */
 
+
+/*
 
 //rotate before window
     /* turn_left(20, 437);
@@ -312,8 +377,8 @@ void ERCMain()
     //MOVERIGHT
     move_forward(80, 2100);
     turn_left(100, 200);
-     */
-  
+    
+  */
     
     
     
