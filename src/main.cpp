@@ -35,6 +35,7 @@ AnalogInputPin right_opto(FEHIO::Pin0);
 
 //servo arm
 FEHServo arm_servo(FEHServo::Servo0); 
+FEHServo bin_servo(FEHServo::Servo1);
 
 
 enum LineStates {
@@ -251,16 +252,28 @@ void ERCMain()
     //int lever_heading = 100;
     //TestGUI();
     // ─── WAIT FOR START LIGHT ───────────────────────────────────────────────
-     while (cds_cell.Value() > 1.2) {
+    /*while (cds_cell.Value() > 1.2) {
         // waiting for start light to turn on
     } 
     // ─── HIT START BUTTON ─────────────────────────────────────────────────── 
+    */
     move_forward(-40, 50);  // reverse into start button
 
 
     move_forward(40, 50);   // move back forward
+    turn_left(20, 45);      // turn left to be parallel with line
+    move_forward(40, 280);
+    float time = TimeNow();
+    bin_servo.SetDegree(115);
+    while (TimeNow() - time < 3);
+    bin_servo.SetDegree(65);
+    while (TimeNow() - time < 6);
+    bin_servo.SetDegree(90);
+    move_forward(-40, 280);
+    turn_right(20, 45);
+    move_forward(-40, 50);
     // ─── NAVIGATE TO RAMP ───────────────────────────────────────────────────
-    arm_servo.SetDegree(0); //arm in up position
+    /* arm_servo.SetDegree(0); //arm in up position
     move_forward(40, 460); //move forward to the line following
     move_forward(-40, 100); //move back a little bit to make sure optosensors can read line
     //follow_optosensor(5.0);
@@ -276,7 +289,7 @@ void ERCMain()
         arm_servo.SetDegree(79);
         Sleep(0.5);
     }*/
-    arm_servo.SetDegree(25); //arm in up position
+    /*arm_servo.SetDegree(25); //arm in up position
     //turn_right(-20, 40);
     move_forward(-20, 80);
     turn_right(20, 30);
