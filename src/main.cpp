@@ -252,17 +252,17 @@ void ERCMain()
     //int lever_heading = 100;
     //TestGUI();
     // ─── WAIT FOR START LIGHT ───────────────────────────────────────────────
-    /*while (cds_cell.Value() > 1.2) {
+    while (cds_cell.Value() > 1.2) {
         // waiting for start light to turn on
     } 
     // ─── HIT START BUTTON ─────────────────────────────────────────────────── 
-    */
+    
     move_forward(-40, 50);  // reverse into start button
 
 
-    move_forward(40, 50);   // move back forward
-    turn_left(20, 45);      // turn left to be parallel with line
-    move_forward(40, 280);
+    //move_forward(40, 50);   // move back forward
+    turn_left(20, 85);      // turn left to be parallel with line
+    move_forward(40, 220);
     float time = TimeNow();
     bin_servo.SetDegree(115);
     while (TimeNow() - time < 3);
