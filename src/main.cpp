@@ -248,6 +248,7 @@ void check_heading(float heading)
 
 void ERCMain()
 {
+    
     //RCS.GetLever();
     //int lever_heading = 100;
     //TestGUI();
@@ -269,9 +270,39 @@ void ERCMain()
     bin_servo.SetDegree(65);
     while (TimeNow() - time < 6);
     bin_servo.SetDegree(90);
-    move_forward(-40, 280);
-    turn_right(20, 45);
-    move_forward(-40, 50);
+    move_forward(-40, 40);
+    turn_right(20, 115);
+    move_forward(40,290);
+    turn_left(20, 115);
+    arm_servo.SetDegree(79);
+    move_forward(25, 160);
+    Sleep(.5);
+    arm_servo.SetDegree(25);
+
+    //turn_right(-20, 40);
+    move_forward(-20, 80);
+    turn_right(20, 30);
+    move_forward(-40, 320);
+    turn_left(20, 15);
+    move_forward(-40, 260);
+
+
+    // off wall to table
+    move_forward(20, 43);
+    turn_right(20, 90);
+    turn_left(40, 25);
+    move_forward(20, 60);
+    turn_right(40, 30);
+    move_forward(60, 520);
+    Sleep(0.5);
+    turn_left(40, 15);
+    move_forward(20, 100);
+    
+    Sleep(1);
+    arm_servo.SetDegree(79); //arm in down position
+    Sleep(0.5);
+
+    //move_forward(-40, 50);
     // ─── NAVIGATE TO RAMP ───────────────────────────────────────────────────
     /* arm_servo.SetDegree(0); //arm in up position
     move_forward(40, 460); //move forward to the line following
