@@ -253,27 +253,29 @@ void ERCMain()
     //int lever_heading = 100;
     //TestGUI();
     // ─── WAIT FOR START LIGHT ───────────────────────────────────────────────
-    while (cds_cell.Value() > 1.2) {
+    /*while (cds_cell.Value() > 1.2) {
         // waiting for start light to turn on
     } 
     // ─── HIT START BUTTON ─────────────────────────────────────────────────── 
-    
+    */
+   
     move_forward(-40, 50);  // reverse into start button
 
 
     //move_forward(40, 50);   // move back forward
-    turn_left(20, 85);      // turn left to be parallel with line
+    turn_left(20, 86);      // turn left to be parallel with line
     move_forward(40, 220);
-    float time = TimeNow();
-    bin_servo.SetDegree(115);
+    /*float time = TimeNow();
+    bin_servo.SetDegree(130);
+    while (TimeNow() - time < 1.5);
+    bin_servo.SetDegree(50);
     while (TimeNow() - time < 3);
-    bin_servo.SetDegree(65);
-    while (TimeNow() - time < 6);
     bin_servo.SetDegree(90);
-    move_forward(-40, 40);
-    turn_right(20, 115);
-    move_forward(40,290);
-    turn_left(20, 115);
+    */move_forward(-40, 40);
+    turn_right(20, 110);
+    move_forward(40,315);
+
+    turn_left(20, 122);
     arm_servo.SetDegree(79);
     move_forward(25, 160);
     Sleep(.5);
@@ -281,10 +283,10 @@ void ERCMain()
 
     //turn_right(-20, 40);
     move_forward(-20, 80);
-    turn_right(20, 30);
-    move_forward(-40, 320);
-    turn_left(20, 15);
-    move_forward(-40, 260);
+    turn_right(20, 40);
+    move_forward(-40, 360);
+    turn_left(20, 35);
+    move_forward(-40, 220);
 
 
     // off wall to table
@@ -293,9 +295,12 @@ void ERCMain()
     turn_left(40, 25);
     move_forward(20, 60);
     turn_right(40, 30);
-    move_forward(60, 520);
+    move_forward(60, 290);
+    turn_left(40, 25);
     Sleep(0.5);
-    turn_left(40, 15);
+    move_forward(60,290);
+    Sleep(0.5);
+    turn_left(40, 25);
     move_forward(20, 100);
     
     Sleep(1);
