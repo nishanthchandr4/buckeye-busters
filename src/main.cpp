@@ -260,32 +260,32 @@ void ERCMain()
     */
    
     move_forward(-40, 50);  // reverse into start button
-
+    arm_servo.SetDegree(0); //arm in up position
 
     //move_forward(40, 50);   // move back forward
-    turn_left(20, 86);      // turn left to be parallel with line
-    move_forward(40, 220);
-    /*float time = TimeNow();
+    turn_left(20, 90);      // turn left to be parallel with line
+    move_forward(40, 217);
+    float time = TimeNow();
     bin_servo.SetDegree(130);
     while (TimeNow() - time < 1.5);
     bin_servo.SetDegree(50);
     while (TimeNow() - time < 3);
     bin_servo.SetDegree(90);
-    */move_forward(-40, 40);
-    turn_right(20, 110);
-    move_forward(40,315);
+    move_forward(-40, 40);
+    turn_right(20, 112);
+    move_forward(40,302);
 
     turn_left(20, 122);
-    arm_servo.SetDegree(79);
-    move_forward(25, 160);
+    arm_servo.SetDegree(82);
+    move_forward(25, 150);
     Sleep(.5);
     arm_servo.SetDegree(25);
 
     //turn_right(-20, 40);
     move_forward(-20, 80);
-    turn_right(20, 40);
+    turn_right(50, 65);
     move_forward(-40, 360);
-    turn_left(20, 35);
+    turn_left(20, 30);
     move_forward(-40, 220);
 
 
@@ -296,12 +296,12 @@ void ERCMain()
     move_forward(20, 60);
     turn_right(40, 30);
     move_forward(60, 290);
-    turn_left(40, 25);
+    turn_left(40, 30);
     Sleep(0.5);
     move_forward(60,290);
     Sleep(0.5);
-    turn_left(40, 25);
-    move_forward(20, 100);
+    turn_left(40, 30);
+    move_forward(20, 140);
     
     Sleep(1);
     arm_servo.SetDegree(79); //arm in down position
