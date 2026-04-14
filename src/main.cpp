@@ -288,7 +288,7 @@ void ERCMain()
     /*
         Pickup apple basket
     */
-    turn_left(20, 120);
+    turn_left(20, 124);
     arm_servo.SetDegree(82);
     move_forward(25, 150);
     Sleep(.5);
