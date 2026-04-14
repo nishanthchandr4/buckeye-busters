@@ -271,11 +271,13 @@ void ERCMain()
     bin_servo.SetDegree(50);
     while (TimeNow() - time < 3);
     bin_servo.SetDegree(90);
+    
+
     move_forward(-40, 40);
     turn_right(20, 112);
     move_forward(40,299);
 
-    turn_left(20, 124);
+    turn_left(20, 123);
     arm_servo.SetDegree(82);
     move_forward(25, 150);
     Sleep(.5);
@@ -283,9 +285,9 @@ void ERCMain()
 
     //turn_right(-20, 40);
     move_forward(-20, 80);
-    turn_right(50, 65);
+    turn_right(25, 65);
     move_forward(-40, 360);
-    turn_left(20, 30);
+    turn_left(25, 30);
     move_forward(-40, 220);
 
 
