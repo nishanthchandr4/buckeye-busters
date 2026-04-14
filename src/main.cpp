@@ -263,7 +263,7 @@ void ERCMain()
     arm_servo.SetDegree(0); //arm in up position
 
     //move_forward(40, 50);   // move back forward
-    turn_left(20, 90);      // turn left to be parallel with line
+    turn_left(20, 75);      // turn left to be parallel with line
     move_forward(40, 217);
     float time = TimeNow();
     bin_servo.SetDegree(130);
@@ -273,9 +273,9 @@ void ERCMain()
     bin_servo.SetDegree(90);
     move_forward(-40, 40);
     turn_right(20, 112);
-    move_forward(40,302);
+    move_forward(40,299);
 
-    turn_left(20, 122);
+    turn_left(20, 120);
     arm_servo.SetDegree(82);
     move_forward(25, 150);
     Sleep(.5);
