@@ -258,11 +258,17 @@ void ERCMain()
     } 
     // ─── HIT START BUTTON ─────────────────────────────────────────────────── 
     */
-   
+   //temporary hit the start button 
     move_forward(-40, 50);  // reverse into start button
     arm_servo.SetDegree(0); //arm in up position
 
+   
     //move_forward(40, 50);   // move back forward
+
+    /*
+        Composter Task
+    */
+    //turn left towards composter 
     turn_left(20, 75);      // turn left to be parallel with line
     move_forward(40, 217);
     float time = TimeNow();
@@ -271,10 +277,17 @@ void ERCMain()
     bin_servo.SetDegree(50);
     while (TimeNow() - time < 3);
     bin_servo.SetDegree(90);
+
+    /*
+        Move to apple basket Task
+    */
     move_forward(-40, 40);
     turn_right(20, 112);
     move_forward(40,299);
 
+    /*
+        Pickup apple basket
+    */
     turn_left(20, 120);
     arm_servo.SetDegree(82);
     move_forward(25, 150);
@@ -282,6 +295,7 @@ void ERCMain()
     arm_servo.SetDegree(25);
 
     //turn_right(-20, 40);
+    
     move_forward(-20, 80);
     turn_right(50, 65);
     move_forward(-40, 360);
