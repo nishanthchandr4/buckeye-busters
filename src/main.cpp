@@ -204,12 +204,16 @@ void test2()
     //turn_right(20, 850);
     move_forward(-40, 1100);
 }
-#define PULSE_POWER 20
+
+/* #define PULSE_POWER 20
 #define PULSE_TIME 0.1
 #define RCS_WAIT_TIME_IN_SEC 0.3
 
+
 void check_heading(float heading)
 {
+    float XPosition, YPosition, Heading;
+    
     RCSPose* pose = RCS.RequestPosition();
 
     // Wait until a valid heading is received
@@ -244,7 +248,51 @@ void check_heading(float heading)
         pose = RCS.RequestPosition();
     }
 }
+ */
 
+#define PULSE_POWER 20
+#define PULSE_TIME 0.1
+#define RCS_WAIT_TIME_IN_SEC 0.3
+
+void check_heading(float heading)
+{
+    float currentHeading = RCS.Heading();
+
+    // Wait until a valid heading is received
+    while(currentHeading == -1)
+    {
+        Sleep(RCS_WAIT_TIME_IN_SEC);
+        currentHeading = RCS.Heading();
+    }
+
+    // Keep correcting until within 2 degrees of target
+    while(currentHeading != -1 && (currentHeading < heading - 2 || currentHeading > heading + 2))
+    {
+        float diff = heading - currentHeading;
+        if(diff > 180)  diff -= 360;
+        if(diff < -180) diff += 360;
+
+        if(diff > 0)
+        {
+            // Turn counterclockwise
+            right_motor.SetPercent(PULSE_POWER);
+            left_motor.SetPercent(-PULSE_POWER);
+        }
+        else
+        {
+            // Turn clockwise
+            right_motor.SetPercent(-PULSE_POWER);
+            left_motor.SetPercent(PULSE_POWER);
+        }
+
+        Sleep(PULSE_TIME);
+        right_motor.Stop();
+        left_motor.Stop();
+
+        Sleep(RCS_WAIT_TIME_IN_SEC);
+        currentHeading = RCS.Heading();
+    }
+}
 
 void ERCMain()
 {
