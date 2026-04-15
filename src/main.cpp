@@ -360,13 +360,18 @@ void check_heading(float heading)
             right_motor.SetPercent(PULSE_POWER);
             left_motor.SetPercent(-PULSE_POWER);
         }
-        else
+        if (diff < 0)
         {
             // CW (you were missing this case!)
             right_motor.SetPercent(-PULSE_POWER);
             left_motor.SetPercent(PULSE_POWER);
         }
-
+        else
+        {
+            right_motor.Stop();
+            left_motor.Stop();
+        }
+        
         Sleep(PULSE_TIME);
         right_motor.Stop();
         left_motor.Stop();
@@ -415,7 +420,7 @@ void ERCMain()
     */
     //turn left towards composter 
     turn_left(20, 80);      // turn left to be parallel with line
-    move_forward(40, 217);
+    move_forward(40, 215);   // move forward to composter
     float time = TimeNow();
     bin_servo.SetDegree(130);
     while (TimeNow() - time < 1.5);
@@ -424,17 +429,31 @@ void ERCMain()
     bin_servo.SetDegree(90);
 
     /*
-        Move to apple basket Task
+        Move to apple  Task
     */
     move_forward(-40, 40);
     turn_right(20, 112);
-    move_forward(40,299);
-
-    /*
-        Pickup apple basket
-    */
+    move_forward(40,199);
+    arm_servo.SetDegree(40);
+    // turn left towards bucket/window
+    turn_left(20, 85);
+    move_forward(40, 120);
+    // allign with window
+    turn_right(20, 64);
+    move_forward(20, 94);
+    // open window
+    turn_right(40, 85);
+    // back up and move forward to get on other side
+    move_forward(-20, 10);
+    move_forward(20, 10);
+    //close window
+    turn_left(40, 85);
+    //move back to apple bucket spot
+    move_forward(-20, 40);
+    turn_right(40, 50);
+    move_forward(-20, 20);
     turn_left(20, 121);
-    check_heading(357);
+    check_heading(1);
     check_y(19.57, PLUS);
     check_x(18.05, PLUS);
 
@@ -444,7 +463,7 @@ void ERCMain()
     arm_servo.SetDegree(25);
 
     //turn_right(-20, 40);
-    
+    // to wall beside ramp
     move_forward(-20, 80);
     turn_right(40, 50);
     move_forward(-40, 360);
@@ -463,8 +482,15 @@ void ERCMain()
     Sleep(0.5);
     move_forward(60,290);
     Sleep(0.5);
+    turn_left(40,112);
+    move_forward(20, 60);
+    turn_right(40, 112);
+    check_heading(265);
+    check_x(29.93, PLUS);
+    check_y(43.25, PLUS);
+    turn_right(40, 50);
     //turn_left(40, 30);
-    move_forward(20, 180);
+    move_forward(20, 80);
     
     Sleep(1);
     arm_servo.SetDegree(79); //arm in down position
