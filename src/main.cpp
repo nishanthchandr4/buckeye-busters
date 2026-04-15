@@ -205,15 +205,139 @@ void test2()
     move_forward(-40, 1100);
 }
 
-/* #define PULSE_POWER 20
+#define PULSE_POWER 20
 #define PULSE_TIME 0.1
 #define RCS_WAIT_TIME_IN_SEC 0.3
+#define COUNTS_PER_INCH 20
+#define COUNTS_PER_DEGREE 1.33
+#define POWER 25
+#define PLUS 0
+#define MINUS 1
 
 
-/*void check_heading(float heading)
+void pulse_forward(int percent, float seconds) 
 {
-    float XPosition, YPosition, Heading;
+    // Set both motors to desired percent
+    right_motor.SetPercent(percent);
+    left_motor.SetPercent(percent);
+
+    // Wait for the correct number of seconds
+    Sleep(seconds);
+
+    // Turn off motors
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+/*
+ * Pulse counterclockwise a short distance using time
+ */
+void pulse_counterclockwise(int percent, float seconds) 
+{
+    // Set both motors to desired percent
+    right_motor.SetPercent(percent);
+    left_motor.SetPercent(-percent);
+
+    // Wait for the correct number of seconds
+    Sleep(seconds);
+
+    // Turn off motors
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+/*
+ * Move forward using shaft encoders where percent is the motor percent and counts is the distance to travel
+ */
+
+
+/*
+ * Turn counterclockwise using shaft encoders where percent is the motor percent and counts is the distance to travel
+ */
+void turn_counterclockwise(int percent, int counts) 
+{
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    right_motor.SetPercent(percent);
+    left_motor.SetPercent(-percent);
+
+    while(left_encoder.Counts() < counts);  // ONE encoder only
+
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+/* 
+ * Use RCS to move to the desired x_coordinate based on the orientation of the AruCo code
+ */
+void check_x(float x_coordinate, int orientation)
+{
+    // Determine the direction of the motors based on the orientation of the AruCo code 
+    int power = PULSE_POWER;
     
+
+    RCSPose* pose = RCS.RequestPosition();
+
+    // Check if receiving proper RCS coordinates and whether the robot is within an acceptable range
+    for (int i = 0; i < 10; i++) {
+        if( pose->x != -1 && (pose->x < x_coordinate - 1 || pose->x > x_coordinate + 1))
+        {
+            if(pose->x < x_coordinate - 1)
+            {
+                // Pulse the motors for a short duration in the correct direction
+                pulse_forward(-power, PULSE_TIME);
+            }
+            else if(pose->x > x_coordinate + 1)
+            {
+                // Pulse the motors for a short duration in the correct direction
+                pulse_forward(power, PULSE_TIME);
+            }
+            Sleep(RCS_WAIT_TIME_IN_SEC);
+
+            pose = RCS.RequestPosition();
+        }
+}
+}
+
+
+/* 
+ * Use RCS to move to the desired y_coordinate based on the orientation of the QR code
+ */
+void check_y(float y_coordinate, int orientation)
+{
+    // Determine the direction of the motors based on the orientation of the QR code
+    int power = PULSE_POWER;
+    
+
+    RCSPose* pose = RCS.RequestPosition();
+
+    // Check if receiving proper RCS coordinates and whether the robot is within an acceptable range
+    for (int i = 0; i < 10; i++) {
+        while( pose->y != -1 && (pose->y < y_coordinate - 1 || pose->y > y_coordinate + 1))
+        {
+            if(pose->y < y_coordinate - 1)
+            {
+                // Pulse the motors for a short duration in the correct direction
+                pulse_forward(-power, PULSE_TIME);
+            }
+            else if(pose->y > y_coordinate + 1)
+            {
+                // Pulse the motors for a short duration in the correct direction
+            pulse_forward(power, PULSE_TIME);
+            }
+            Sleep(RCS_WAIT_TIME_IN_SEC);
+            
+            pose = RCS.RequestPosition();
+        }
+    }   
+}
+
+/* 
+ * Use RCS to move to the desired heading
+ */
+void check_heading(float heading)
+{
     RCSPose* pose = RCS.RequestPosition();
 
     // Wait until a valid heading is received
@@ -223,64 +347,22 @@ void test2()
         pose = RCS.RequestPosition();
     }
 
-    // Keep correcting until within 2 degrees of target
-    while(pose->heading != -1 && (pose->heading < heading - 2 || pose->heading > heading + 2))
-    {
-        // Special case: handle wrap-around near 0/360 degrees
-        // e.g. target is 0, robot reads 355 — that's only 5 degrees off, not 355
-        float diff = heading - pose->heading;
-        if(diff > 180)  diff -= 360;
-        if(diff < -180) diff += 360;
+    float diff = heading - pose->heading;
+    if(diff > 180)  diff -= 360;
+    if(diff < -180) diff += 360;
 
+    // Use diff instead of raw heading comparison
+    while(pose->heading != -1 && fabs(diff) > 2)
+    {
         if(diff > 0)
         {
-            // Need to turn counterclockwise
-            right_motor.SetPercent(PULSE_POWER);
-            left_motor.SetPercent(-PULSE_POWER);
-        }
-        
-
-        Sleep(PULSE_TIME);
-        right_motor.Stop();
-        left_motor.Stop();
-
-        Sleep(RCS_WAIT_TIME_IN_SEC);
-        pose = RCS.RequestPosition();
-    }
-}
- */
-
-#define PULSE_POWER 20
-#define PULSE_TIME 0.1
-#define RCS_WAIT_TIME_IN_SEC 0.3
-
-void check_heading(float heading)
-{
-    float currentHeading = RCS.Heading();
-
-    // Wait until a valid heading is received
-    while(currentHeading == -1)
-    {
-        Sleep(RCS_WAIT_TIME_IN_SEC);
-        currentHeading = RCS.Heading();
-    }
-
-    // Keep correcting until within 2 degrees of target
-    while(currentHeading != -1 && (currentHeading < heading - 2 || currentHeading > heading + 2))
-    {
-        float diff = heading - currentHeading;
-        if(diff > 180)  diff -= 360;
-        if(diff < -180) diff += 360;
-
-        if(diff > 0)
-        {
-            // Turn counterclockwise
+            // CCW
             right_motor.SetPercent(PULSE_POWER);
             left_motor.SetPercent(-PULSE_POWER);
         }
         else
         {
-            // Turn clockwise
+            // CW (you were missing this case!)
             right_motor.SetPercent(-PULSE_POWER);
             left_motor.SetPercent(PULSE_POWER);
         }
@@ -290,10 +372,14 @@ void check_heading(float heading)
         left_motor.Stop();
 
         Sleep(RCS_WAIT_TIME_IN_SEC);
-        currentHeading = RCS.Heading();
+        pose = RCS.RequestPosition();
+
+        // recompute diff every loop
+        diff = heading - pose->heading;
+        if(diff > 180)  diff -= 360;
+        if(diff < -180) diff += 360;
     }
 }
-
 void ERCMain()
 {
     
@@ -307,7 +393,17 @@ void ERCMain()
     // ─── HIT START BUTTON ─────────────────────────────────────────────────── 
     */
    //temporary hit the start button 
-    
+    RCS.InitializeTouchMenu("1130D3UAI");
+    /*while(true)
+    {
+        // get the current course number and display it to the screen
+        LCD.WriteLine( RCS.CurrentRegionLetter() );
+        Sleep( 0.5 );
+    } */   
+    RCS.GetLever();
+    while (cds_cell.Value() > 1.2) {
+        // waiting for start light to turn on
+    } 
     move_forward(-40, 50);  // reverse into start button
     arm_servo.SetDegree(0); //arm in up position
 
@@ -318,7 +414,7 @@ void ERCMain()
         Composter Task
     */
     //turn left towards composter 
-    turn_left(20, 75);      // turn left to be parallel with line
+    turn_left(20, 80);      // turn left to be parallel with line
     move_forward(40, 217);
     float time = TimeNow();
     bin_servo.SetDegree(130);
@@ -337,16 +433,20 @@ void ERCMain()
     /*
         Pickup apple basket
     */
-    turn_left(20, 123);
+    turn_left(20, 121);
+    check_heading(357);
+    check_y(19.57, PLUS);
+    check_x(18.05, PLUS);
+
     arm_servo.SetDegree(82);
-    move_forward(25, 150);
+    move_forward(25, 65);
     Sleep(.5);
     arm_servo.SetDegree(25);
 
     //turn_right(-20, 40);
     
     move_forward(-20, 80);
-    turn_right(40, 25);
+    turn_right(40, 50);
     move_forward(-40, 360);
     turn_left(40, 25);
     move_forward(-40, 220);
@@ -356,15 +456,15 @@ void ERCMain()
     move_forward(20, 43);
     turn_right(20, 90);
     turn_left(40, 25);
-    move_forward(20, 60);
+    move_forward(20, 20);
     turn_right(40, 30);
     move_forward(60, 290);
     //turn_left(40, 30);
     Sleep(0.5);
     move_forward(60,290);
     Sleep(0.5);
-    turn_left(40, 30);
-    move_forward(20, 140);
+    //turn_left(40, 30);
+    move_forward(20, 180);
     
     Sleep(1);
     arm_servo.SetDegree(79); //arm in down position
