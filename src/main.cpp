@@ -434,13 +434,13 @@ void ERCMain()
     move_forward(-40, 40);
     turn_right(20, 112);
     move_forward(40,199);
-    arm_servo.SetDegree(40);
+    arm_servo.SetDegree(45);
     // turn left towards bucket/window
     turn_left(20, 85);
-    move_forward(40, 120);
+    move_forward(40, 124);
     // allign with window
     turn_right(20, 64);
-    move_forward(20, 94);
+    move_forward(20, 96);
     // open window
     turn_right(40, 85);
     // back up and move forward to get on other side
@@ -450,26 +450,31 @@ void ERCMain()
     turn_left(40, 85);
     //move back to apple bucket spot
     move_forward(-20, 40);
-    turn_right(40, 50);
-    move_forward(-20, 20);
+    turn_right(40, 20);
+    move_forward(-20, 60);
     turn_left(20, 121);
-    check_heading(1);
+    move_forward(-20, 200);
+
+    /*check_heading(1);
+
     check_y(19.57, PLUS);
     check_x(18.05, PLUS);
+    
 
     arm_servo.SetDegree(82);
     move_forward(25, 65);
     Sleep(.5);
     arm_servo.SetDegree(25);
-
+    */
+    
     //turn_right(-20, 40);
     // to wall beside ramp
-    move_forward(-20, 80);
+    /*move_forward(-20, 80);
     turn_right(40, 50);
     move_forward(-40, 360);
     turn_left(40, 25);
     move_forward(-40, 220);
-
+    */
 
     // off wall to table
     move_forward(20, 43);
@@ -482,16 +487,16 @@ void ERCMain()
     Sleep(0.5);
     move_forward(60,290);
     Sleep(0.5);
-    turn_left(40,112);
+    /*turn_left(40,112);
     move_forward(20, 60);
     turn_right(40, 112);
-    check_heading(265);
-    check_x(29.93, PLUS);
-    check_y(43.25, PLUS);
+    //check_heading(265);
+    //heck_x(29.93, PLUS);
+    //check_y(43.25, PLUS);
     turn_right(40, 50);
     //turn_left(40, 30);
     move_forward(20, 80);
-    
+    */
     Sleep(1);
     arm_servo.SetDegree(79); //arm in down position
     Sleep(0.5);
