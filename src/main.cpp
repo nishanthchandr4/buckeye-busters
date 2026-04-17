@@ -44,13 +44,13 @@ enum LineStates {
     LEFT
 };
 
-void follow_optosensor(float time)
+void follow_optosensor()
 {
 
     LineStates state = MIDDLE;
     float timeNow = TimeNow();
     
-    while (TimeNow() - timeNow < time) {
+    while (true) {
 
         bool rightOnTape  = right_opto.Value()  > 4.0;
         bool leftOnTape   = left_opto.Value()   > 4.0;
@@ -204,7 +204,7 @@ void test2()
     //turn_right(20, 850);
     move_forward(-40, 1100);
 }
-
+/* 
 #define PULSE_POWER 20
 #define PULSE_TIME 0.1
 #define RCS_WAIT_TIME_IN_SEC 0.3
@@ -232,6 +232,8 @@ void pulse_forward(int percent, float seconds)
 /*
  * Pulse counterclockwise a short distance using time
  */
+
+ /*
 void pulse_counterclockwise(int percent, float seconds) 
 {
     // Set both motors to desired percent
@@ -254,6 +256,8 @@ void pulse_counterclockwise(int percent, float seconds)
 /*
  * Turn counterclockwise using shaft encoders where percent is the motor percent and counts is the distance to travel
  */
+
+ /*
 void turn_counterclockwise(int percent, int counts) 
 {
     right_encoder.ResetCounts();
@@ -271,6 +275,8 @@ void turn_counterclockwise(int percent, int counts)
 /* 
  * Use RCS to move to the desired x_coordinate based on the orientation of the AruCo code
  */
+
+/*  
 void check_x(float x_coordinate, int orientation)
 {
     // Determine the direction of the motors based on the orientation of the AruCo code 
@@ -299,11 +305,12 @@ void check_x(float x_coordinate, int orientation)
         }
 }
 }
-
+ */
 
 /* 
  * Use RCS to move to the desired y_coordinate based on the orientation of the QR code
  */
+/* 
 void check_y(float y_coordinate, int orientation)
 {
     // Determine the direction of the motors based on the orientation of the QR code
@@ -332,11 +339,11 @@ void check_y(float y_coordinate, int orientation)
         }
     }   
 }
-
+ */
 /* 
  * Use RCS to move to the desired heading
  */
-void check_heading(float heading)
+/* void check_heading(float heading)
 {
     RCSPose* pose = RCS.RequestPosition();
 
@@ -384,13 +391,15 @@ void check_heading(float heading)
         if(diff > 180)  diff -= 360;
         if(diff < -180) diff += 360;
     }
-}
+} */
+ 
 void ERCMain()
 {
+
+
     
     //RCS.GetLever();
     //int lever_heading = 100;
-    //TestGUI();
     // ─── WAIT FOR START LIGHT ───────────────────────────────────────────────
     /*while (cds_cell.Value() > 1.2) {
         // waiting for start light to turn on
@@ -405,7 +414,7 @@ void ERCMain()
         LCD.WriteLine( RCS.CurrentRegionLetter() );
         Sleep( 0.5 );
     } */   
-    RCS.GetLever();
+    //RCS.GetLever();
     while (cds_cell.Value() > 1.2) {
         // waiting for start light to turn on
     } 
@@ -432,28 +441,30 @@ void ERCMain()
         Move to apple  Task
     */
     move_forward(-40, 40);
+    bin_servo.Off();
     turn_right(20, 112);
     move_forward(40,199);
-    arm_servo.SetDegree(45);
+    arm_servo.SetDegree(47);
     // turn left towards bucket/window
     turn_left(20, 85);
-    move_forward(40, 124);
+    move_forward(40, 125);
     // allign with window
     turn_right(20, 64);
     move_forward(20, 96);
     // open window
-    turn_right(40, 85);
+    turn_right(40, 90);
     // back up and move forward to get on other side
-    move_forward(-20, 10);
-    move_forward(20, 10);
+    /* move_forward(-20, 10);
+    move_forward(20, 16);
     //close window
-    turn_left(40, 85);
-    //move back to apple bucket spot
-    move_forward(-20, 40);
-    turn_right(40, 20);
-    move_forward(-20, 60);
-    turn_left(20, 121);
-    move_forward(-20, 200);
+    turn_left(40, 85); */
+   
+    arm_servo.SetDegree(0);
+    move_forward(-20, 65);
+    turn_left(20, 40);
+    move_forward(-40, 170);
+    turn_left(20, 108);
+    move_forward(-40, 499);
 
     /*check_heading(1);
 
@@ -477,16 +488,75 @@ void ERCMain()
     */
 
     // off wall to table
-    move_forward(20, 43);
-    turn_right(20, 90);
-    turn_left(40, 25);
-    move_forward(20, 20);
-    turn_right(40, 30);
-    move_forward(60, 290);
-    //turn_left(40, 30);
-    Sleep(0.5);
-    move_forward(60,290);
-    Sleep(0.5);
+    //move_forward(20, 43);
+    move_forward(20, 65);
+    turn_right(20, 96);
+    move_forward(40, 760);
+
+    move_forward(-20, 60);
+    
+    turn_left(20, 112);
+    move_forward(-20, 140);
+    move_forward(60, 420);
+    turn_left(20, 10);
+    move_forward(40, 60);
+ 
+
+
+   
+    
+
+    /*follow_optosensor();
+    LCD.Write("finished following optosensor");
+    move_forward(40, 139);
+
+    Sleep(2); 
+    
+
+    float cdsValue = cds_cell.Value();
+    LCD.Write("cds value: ");
+    LCD.Write(cdsValue);
+
+    if(cdsValue < 0.48) { //red light
+        LCD.Write("red light: ");
+        LCD.Write(cdsValue);
+        turn_right(20,219);
+        move_forward(40, 50);
+        turn_left(20, 205);
+        move_forward(40, 244);
+    } else if(cds_cell.Value() > 0.48 && cds_cell.Value() < 1.0) { //blue light
+        LCD.Write("blue light: ");
+        LCD.Write(cdsValue);
+        turn_left(20, 219);
+        move_forward(40, 20);
+        turn_right(20, 219);
+        move_forward(40, 244);
+    } 
+    arm_servo.SetDegree(25); //arm in up position
+    */move_forward(-20, 80);
+    arm_servo.SetDegree(0); //arm in up position
+    turn_right(20, 80);
+    move_forward(20, 110);
+    turn_left(20, 10);
+    move_forward(20, 40);
+    arm_servo.SetDegree(100); //arm in down position
+    Sleep(5);
+    move_forward(-20, 80);
+    //arm_servo.SetDegree(0); //arm in up position
+    move_forward(20, 80);
+    arm_servo.SetDegree(0);
+    //arm_servo.SetDegree(100);
+    move_forward(-20, 100);
+    turn_right(20, 20);
+    move_forward(20, 120);
+    move_forward(20, 40);
+    turn_right(20, 112);
+    move_forward(40, 260);
+    move_forward(-40, 40);
+    turn_right(40, 112);
+    move_forward(40, 700);
+
+    
     /*turn_left(40,112);
     move_forward(20, 60);
     turn_right(40, 112);
@@ -497,9 +567,9 @@ void ERCMain()
     //turn_left(40, 30);
     move_forward(20, 80);
     */
-    Sleep(1);
+   /*  Sleep(1);
     arm_servo.SetDegree(79); //arm in down position
-    Sleep(0.5);
+    Sleep(0.5); */
 
     //move_forward(-40, 50);
     // ─── NAVIGATE TO RAMP ───────────────────────────────────────────────────
@@ -623,6 +693,7 @@ void ERCMain()
     
   */
     
+  
     
     
 }
