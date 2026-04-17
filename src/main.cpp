@@ -462,9 +462,9 @@ void ERCMain()
     arm_servo.SetDegree(0);
     move_forward(-20, 65);
     turn_left(20, 40);
-    move_forward(-40, 170);
+    move_forward(-40, 155);
     turn_left(20, 108);
-    move_forward(-40, 499);
+    move_forward(-40, 519);
 
     /*check_heading(1);
 
@@ -490,13 +490,13 @@ void ERCMain()
     // off wall to table
     //move_forward(20, 43);
     move_forward(20, 65);
-    turn_right(20, 96);
-    move_forward(40, 760);
+    turn_right(20, 98);
+    move_forward(40, 780);
 
     move_forward(-20, 60);
     
     turn_left(20, 112);
-    move_forward(-20, 140);
+    move_forward(-20, 170);
     move_forward(60, 420);
     turn_left(20, 10);
     move_forward(40, 60);
@@ -537,7 +537,7 @@ void ERCMain()
     arm_servo.SetDegree(0); //arm in up position
     turn_right(20, 80);
     move_forward(20, 110);
-    turn_left(20, 10);
+    turn_left(20, 5);
     move_forward(20, 40);
     arm_servo.SetDegree(100); //arm in down position
     Sleep(5);
@@ -546,15 +546,15 @@ void ERCMain()
     move_forward(20, 80);
     arm_servo.SetDegree(0);
     //arm_servo.SetDegree(100);
-    move_forward(-20, 100);
+    move_forward(-20, 140);
     turn_right(20, 20);
-    move_forward(20, 120);
+    //move_forward(20, 120);
     move_forward(20, 40);
     turn_right(20, 112);
     move_forward(40, 260);
     move_forward(-40, 40);
     turn_right(40, 112);
-    move_forward(40, 700);
+    move_forward(40, 760);
 
     
     /*turn_left(40,112);
