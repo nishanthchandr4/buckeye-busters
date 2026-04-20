@@ -454,28 +454,46 @@ void ERCMain()
     turn_right(20, 78);
     move_forward(20, 96);
     // open window
-    turn_right(40, 90);
+    turn_right(50, 90);
     // back up and move forward to get on other side
-    /* move_forward(-20, 10);
-    move_forward(20, 16);
+    move_forward(-20, 30);
+    turn_right(20, 5);
+    move_forward(20, 36);
     //close window
-    turn_left(40, 85); */
+    turn_left(40, 90);
     
     arm_servo.SetDegree(0);
     move_forward(-20, 65);
-    turn_left(20, 40);
+    turn_left(20, 112);
+    move_forward(-20, 120);
+    arm_servo.SetDegree(80);
+    move_forward(25, 140);
+    Sleep(.5);
+    arm_servo.SetDegree(25);
+    move_forward(-20, 80);
+    turn_right(20, 30);
+    move_forward(-40, 320);
+    turn_left(20, 15);
+    move_forward(-40, 140);
+    /*turn_left(20, 70);
     move_forward(-40, 75);
     //move_forward(-40, 155);
-    turn_left(20, 108);
+    turn_left(20, 61);
+    move_forward(-40, 120);
     //check_heading(1);
     //check_y(19.57, PLUS);
     //check_x(18.05, PLUS);
-    arm_servo.SetDegree(82);
-    move_forward(25, 60);
+    arm_servo.SetDegree(80);
+    move_forward(25, 140);
+    
     Sleep(.5);
     arm_servo.SetDegree(25);
-    move_forward(-40, 540);
-
+    move_forward(-20, 80);
+    turn_right(20, 30);
+    move_forward(-40, 320);
+    turn_left(20, 15);
+    move_forward(-40, 140);
+*/
     /*check_heading(1);
 
     check_y(19.57, PLUS);
@@ -490,12 +508,12 @@ void ERCMain()
     
     //turn_right(-20, 40);
     // to wall beside ramp
-    move_forward(-20, 80);
+    /*move_forward(-20, 80);
     turn_right(40, 50);
     move_forward(-40, 360);
     turn_left(40, 25);
     move_forward(-40, 220);
-    
+    */
 
     // off wall to table
     //move_forward(20, 43);
@@ -510,8 +528,11 @@ void ERCMain()
     //move_forward(50, 780);
 
     move_forward(-20, 60);
-    
+    arm_servo.SetDegree(82);
+    Sleep(0.5);
+    arm_servo.SetDegree(0);
     turn_left(20, 112);
+    
     move_forward(-20, 170);
     move_forward(60, 420);
     turn_left(20, 10);
