@@ -106,6 +106,28 @@ void follow_optosensor()
     left_motor.Stop();
 }
 
+void move_forward_with_applebuckey(int percent, int counts, float right_increase) //using encoders
+{
+    int rightPercent = right_increase * percent;
+    int leftPercent = percent;
+    //Reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    //Set both motors to desired percent
+    right_motor.SetPercent(0);
+    left_motor.SetPercent(0);
+    right_motor.SetPercent(rightPercent);
+    left_motor.SetPercent(leftPercent);
+
+    //While the average of the left and right encoder is less than counts,
+    //keep running motors
+    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts){     
+    } 
+        right_motor.Stop();
+        left_motor.Stop();
+    }
+
 //input a negative percent if you want to move backwards
 void move_forward(int percent, int counts) //using encoders
 {
