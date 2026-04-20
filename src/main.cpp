@@ -454,20 +454,23 @@ void ERCMain()
     turn_right(20, 78);
     move_forward(20, 96);
     // open window
-    turn_right(50, 90);
+    turn_right(50, 85);
     // back up and move forward to get on other side
-    move_forward(-20, 30);
+    /*move_forward(-20, 30);
     turn_right(20, 5);
-    move_forward(20, 36);
+    move_forward(20, 26);
     //close window
-    turn_left(40, 90);
+    turn_left(50, 90);
     
-    arm_servo.SetDegree(0);
-    move_forward(-20, 65);
+    */arm_servo.SetDegree(0);
+    move_forward(-20, 60);
+    turn_left(20, 20);
+    move_forward(40, 120);
+    move_forward(-20, 85);
     turn_left(20, 112);
-    move_forward(-20, 120);
-    arm_servo.SetDegree(80);
-    move_forward(25, 140);
+    move_forward(-20, 80);
+    arm_servo.SetDegree(82);
+    move_forward(25, 160);
     Sleep(.5);
     arm_servo.SetDegree(25);
     move_forward(-20, 80);
@@ -519,13 +522,9 @@ void ERCMain()
     //move_forward(20, 43);
     move_forward(20, 65);
     turn_right(20, 98);
-    time = TimeNow();
-    while (TimeNow() - time < 5){
-        right_motor.SetPercent(65);
-        left_motor.SetPercent(50);
-    }
     
-    //move_forward(50, 780);
+    
+    move_forward(50, 720);
 
     move_forward(-20, 60);
     arm_servo.SetDegree(82);
