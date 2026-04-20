@@ -125,7 +125,7 @@ void move_forward(int percent, int counts) //using encoders
     //keep running motors
     while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts)
     {
-        /* if(left_encoder.Counts() > right_encoder.Counts()) {
+         /*if(left_encoder.Counts() > right_encoder.Counts()) {
             if (rightPercent<=80)
             {
                 rightPercent+=5;
@@ -141,14 +141,16 @@ void move_forward(int percent, int counts) //using encoders
                 leftPercent -=5;
                 right_motor.SetPercent(rightPercent);
                 left_motor.SetPercent(leftPercent);
-            }
-        } */
+            }*/
+        } 
+        right_motor.Stop();
+        left_motor.Stop();
     }
 
     //Turn off motors
-    right_motor.Stop();
-    left_motor.Stop();
-}
+    //right_motor.Stop();
+    //left_motor.Stop();
+//}
 
 void turn_right(int percent, int counts) //using encoders
 {
@@ -204,7 +206,7 @@ void test2()
     //turn_right(20, 850);
     move_forward(-40, 1100);
 }
-/* 
+ 
 #define PULSE_POWER 20
 #define PULSE_TIME 0.1
 #define RCS_WAIT_TIME_IN_SEC 0.3
@@ -233,7 +235,7 @@ void pulse_forward(int percent, float seconds)
  * Pulse counterclockwise a short distance using time
  */
 
- /*
+ 
 void pulse_counterclockwise(int percent, float seconds) 
 {
     // Set both motors to desired percent
@@ -276,7 +278,7 @@ void turn_counterclockwise(int percent, int counts)
  * Use RCS to move to the desired x_coordinate based on the orientation of the AruCo code
  */
 
-/*  
+ 
 void check_x(float x_coordinate, int orientation)
 {
     // Determine the direction of the motors based on the orientation of the AruCo code 
@@ -305,12 +307,12 @@ void check_x(float x_coordinate, int orientation)
         }
 }
 }
- */
+ 
 
 /* 
  * Use RCS to move to the desired y_coordinate based on the orientation of the QR code
  */
-/* 
+ 
 void check_y(float y_coordinate, int orientation)
 {
     // Determine the direction of the motors based on the orientation of the QR code
@@ -339,11 +341,11 @@ void check_y(float y_coordinate, int orientation)
         }
     }   
 }
- */
+
 /* 
  * Use RCS to move to the desired heading
  */
-/* void check_heading(float heading)
+ void check_heading(float heading)
 {
     RCSPose* pose = RCS.RequestPosition();
 
@@ -391,12 +393,12 @@ void check_y(float y_coordinate, int orientation)
         if(diff > 180)  diff -= 360;
         if(diff < -180) diff += 360;
     }
-} */
+} 
  
 void ERCMain()
 {
 
-
+    //TestGUI();
     
     //RCS.GetLever();
     //int lever_heading = 100;
@@ -424,9 +426,9 @@ void ERCMain()
    
     //move_forward(40, 50);   // move back forward
 
-    /*
-        Composter Task
-    */
+    
+        //Composter Task
+    
     //turn left towards composter 
     turn_left(20, 80);      // turn left to be parallel with line
     move_forward(40, 215);   // move forward to composter
@@ -442,14 +444,14 @@ void ERCMain()
     */
     move_forward(-40, 40);
     bin_servo.Off();
-    turn_right(20, 112);
+    turn_right(20, 118);
     move_forward(40,199);
     arm_servo.SetDegree(47);
     // turn left towards bucket/window
     turn_left(20, 85);
     move_forward(40, 125);
     // allign with window
-    turn_right(20, 64);
+    turn_right(20, 78);
     move_forward(20, 96);
     // open window
     turn_right(40, 90);
@@ -458,13 +460,21 @@ void ERCMain()
     move_forward(20, 16);
     //close window
     turn_left(40, 85); */
-   
+    
     arm_servo.SetDegree(0);
     move_forward(-20, 65);
     turn_left(20, 40);
-    move_forward(-40, 155);
+    move_forward(-40, 75);
+    //move_forward(-40, 155);
     turn_left(20, 108);
-    move_forward(-40, 519);
+    //check_heading(1);
+    //check_y(19.57, PLUS);
+    //check_x(18.05, PLUS);
+    arm_servo.SetDegree(82);
+    move_forward(25, 60);
+    Sleep(.5);
+    arm_servo.SetDegree(25);
+    move_forward(-40, 540);
 
     /*check_heading(1);
 
@@ -480,18 +490,24 @@ void ERCMain()
     
     //turn_right(-20, 40);
     // to wall beside ramp
-    /*move_forward(-20, 80);
+    move_forward(-20, 80);
     turn_right(40, 50);
     move_forward(-40, 360);
     turn_left(40, 25);
     move_forward(-40, 220);
-    */
+    
 
     // off wall to table
     //move_forward(20, 43);
     move_forward(20, 65);
     turn_right(20, 98);
-    move_forward(40, 780);
+    time = TimeNow();
+    while (TimeNow() - time < 5){
+        right_motor.SetPercent(65);
+        left_motor.SetPercent(50);
+    }
+    
+    //move_forward(50, 780);
 
     move_forward(-20, 60);
     
@@ -541,16 +557,16 @@ void ERCMain()
     move_forward(20, 40);
     arm_servo.SetDegree(100); //arm in down position
     Sleep(5);
-    move_forward(-20, 80);
+    move_forward(-20, 120);
     //arm_servo.SetDegree(0); //arm in up position
-    move_forward(20, 80);
+    move_forward(20, 120);
     arm_servo.SetDegree(0);
     //arm_servo.SetDegree(100);
     move_forward(-20, 140);
     turn_right(20, 20);
     //move_forward(20, 120);
     move_forward(20, 40);
-    turn_right(20, 112);
+    turn_right(20, 120);
     move_forward(40, 260);
     move_forward(-40, 40);
     turn_right(40, 112);
