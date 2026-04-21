@@ -230,10 +230,10 @@ void test2()
 }
  
 #define PULSE_POWER 20
-#define PULSE_TIME 0.1
+#define PULSE_TIME 0.2
 #define RCS_WAIT_TIME_IN_SEC 0.3
-#define COUNTS_PER_INCH 20
-#define COUNTS_PER_DEGREE 1.33
+#define COUNTS_PER_INCH 20.513
+#define COUNTS_PER_DEGREE 0.893
 #define POWER 25
 #define PLUS 0
 #define MINUS 1
@@ -281,7 +281,7 @@ void pulse_counterclockwise(int percent, float seconds)
  * Turn counterclockwise using shaft encoders where percent is the motor percent and counts is the distance to travel
  */
 
- /*
+
 void turn_counterclockwise(int percent, int counts) 
 {
     right_encoder.ResetCounts();
@@ -376,6 +376,7 @@ void check_y(float y_coordinate, int orientation)
     {
         Sleep(RCS_WAIT_TIME_IN_SEC);
         pose = RCS.RequestPosition();
+        
     }
 
     float diff = heading - pose->heading;
@@ -391,7 +392,7 @@ void check_y(float y_coordinate, int orientation)
             right_motor.SetPercent(PULSE_POWER);
             left_motor.SetPercent(-PULSE_POWER);
         }
-        if (diff < 0)
+        else if (diff < 0)
         {
             // CW (you were missing this case!)
             right_motor.SetPercent(-PULSE_POWER);
@@ -476,7 +477,7 @@ void ERCMain()
     turn_right(20, 70);
     move_forward(20, 96);
     // open window
-    turn_right(50, 95);
+    turn_right(50, 100);
     // back up and move forward to get on other side
     /*move_forward(-20, 30);
     turn_right(20, 5);
@@ -486,17 +487,20 @@ void ERCMain()
     
     */arm_servo.SetDegree(0);
     move_forward(-20, 60);
-    turn_left(20, 30);
-    move_forward(40, 120);
-    move_forward(-20, 110);
-    turn_left(20, 112);
-    move_forward(-20, 130);
+    turn_left(20, 95);
+    move_forward(-40, 60);
+    //move_forward(-20, 110);
+    turn_left(20, 82);
+    //check_x(18.05, PLUS);
+    check_y(17.45, PLUS);
+    
+    check_heading(359);
     arm_servo.SetDegree(82);
-    move_forward(25, 210);
+    move_forward(25, 140);
     Sleep(.5);
-    arm_servo.SetDegree(15);
+    arm_servo.SetDegree(5);
     move_forward(-20, 80);
-    turn_right(20, 30);
+    turn_right(20, 35);
     move_forward(-40, 320);
     turn_left(20, 40);
     move_forward(-40, 140);
@@ -546,7 +550,9 @@ void ERCMain()
     turn_right(20, 98);
     
     
-    move_forward(50, 720);
+    move_forward(50, 360);
+    turn_left(40, 32);
+    move_forward(40, 480);
 
     move_forward(-20, 60);
     arm_servo.SetDegree(82);
