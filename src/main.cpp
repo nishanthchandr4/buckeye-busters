@@ -350,12 +350,12 @@ void check_y(float y_coordinate, int orientation)
             if(pose->y < y_coordinate - 1)
             {
                 // Pulse the motors for a short duration in the correct direction
-                pulse_forward(-power, PULSE_TIME);
+                pulse_forward(power, PULSE_TIME);
             }
             else if(pose->y > y_coordinate + 1)
             {
                 // Pulse the motors for a short duration in the correct direction
-            pulse_forward(power, PULSE_TIME);
+            pulse_forward(-power, PULSE_TIME);
             }
             Sleep(RCS_WAIT_TIME_IN_SEC);
             
@@ -487,16 +487,17 @@ void ERCMain()
     
     */arm_servo.SetDegree(0);
     move_forward(-20, 60);
-    turn_left(20, 70);
+    turn_left(20, 35);
     move_forward(40, 120);
 
-    move_forward(-40, 85);
+    move_forward(-40, 80);
     //move_forward(-20, 110);
     turn_left(20, 112);
     //check_x(18.05, PLUS);
-    check_y(17.5, MINUS);
-    
     check_heading(359);
+    check_y(17.5, PLUS);
+    
+    
     arm_servo.SetDegree(82);
     move_forward(25, 140);
     Sleep(.5);
