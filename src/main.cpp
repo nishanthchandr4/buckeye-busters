@@ -473,10 +473,10 @@ void ERCMain()
     turn_left(20, 85);
     move_forward(40, 125);
     // allign with window
-    turn_right(20, 78);
+    turn_right(20, 70);
     move_forward(20, 96);
     // open window
-    turn_right(50, 85);
+    turn_right(50, 95);
     // back up and move forward to get on other side
     /*move_forward(-20, 30);
     turn_right(20, 5);
@@ -486,19 +486,19 @@ void ERCMain()
     
     */arm_servo.SetDegree(0);
     move_forward(-20, 60);
-    turn_left(20, 20);
+    turn_left(20, 30);
     move_forward(40, 120);
-    move_forward(-20, 85);
+    move_forward(-20, 110);
     turn_left(20, 112);
-    move_forward(-20, 80);
+    move_forward(-20, 130);
     arm_servo.SetDegree(82);
-    move_forward(25, 160);
+    move_forward(25, 210);
     Sleep(.5);
-    arm_servo.SetDegree(25);
+    arm_servo.SetDegree(15);
     move_forward(-20, 80);
     turn_right(20, 30);
     move_forward(-40, 320);
-    turn_left(20, 15);
+    turn_left(20, 40);
     move_forward(-40, 140);
     /*turn_left(20, 70);
     move_forward(-40, 75);
