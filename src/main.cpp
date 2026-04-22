@@ -229,8 +229,8 @@ void test2()
     move_forward(-40, 1100);
 }
  
-#define PULSE_POWER 20
-#define PULSE_TIME 0.2
+#define PULSE_POWER 15
+#define PULSE_TIME 0.1
 #define RCS_WAIT_TIME_IN_SEC 0.3
 #define COUNTS_PER_INCH 20.513
 #define COUNTS_PER_DEGREE 0.893
@@ -474,7 +474,7 @@ void ERCMain()
     turn_left(20, 85);
     move_forward(40, 125);
     // allign with window
-    turn_right(20, 70);
+    turn_right(20, 72);
     move_forward(20, 96);
     // open window
     turn_right(50, 100);
@@ -487,25 +487,29 @@ void ERCMain()
     
     */arm_servo.SetDegree(0);
     move_forward(-20, 60);
-    turn_left(20, 35);
+    turn_left(20, 37);
     move_forward(40, 120);
 
-    move_forward(-40, 80);
+    move_forward(-40, 95);
     //move_forward(-20, 110);
     turn_left(20, 112);
     //check_x(18.05, PLUS);
+    move_forward(-40, 20);
     check_heading(359);
-    check_y(17.5, PLUS);
+    check_x(19.45, PLUS);
+    check_heading(359);
     
+    //move_forward(20, 120);
     
+    move_forward(-40, 80);
     arm_servo.SetDegree(82);
-    move_forward(25, 140);
+    move_forward(25, 160);
     Sleep(.5);
     arm_servo.SetDegree(5);
     move_forward(-20, 80);
-    turn_right(20, 35);
+    turn_right(20, 38);
     move_forward(-40, 320);
-    turn_left(20, 40);
+    turn_left(20, 36);
     move_forward(-40, 140);
     /*turn_left(20, 70);
     move_forward(-40, 75);
@@ -554,7 +558,7 @@ void ERCMain()
     
     
     move_forward(50, 360);
-    turn_left(40, 32);
+    turn_left(40, 20);
     move_forward(40, 480);
 
     move_forward(-20, 60);
@@ -564,9 +568,13 @@ void ERCMain()
     turn_left(20, 112);
     
     move_forward(-20, 170);
-    move_forward(60, 420);
+    move_forward(60, 300);
+    check_x(15.49, PLUS);
+    check_y(50.45, PLUS);
+    check_heading(355);
+
     turn_left(20, 10);
-    move_forward(40, 60);
+    move_forward(40, 120);
  
 
 
@@ -604,7 +612,7 @@ void ERCMain()
     arm_servo.SetDegree(0); //arm in up position
     turn_right(20, 80);
     move_forward(20, 110);
-    turn_left(20, 5);
+    //turn_left(20, 5);
     move_forward(20, 40);
     arm_servo.SetDegree(100); //arm in down position
     Sleep(5);
@@ -619,8 +627,8 @@ void ERCMain()
     move_forward(20, 40);
     turn_right(20, 120);
     move_forward(40, 260);
-    move_forward(-40, 40);
-    turn_right(40, 112);
+    move_forward(-40, 25);
+    turn_right(40, 107);
     move_forward(40, 760);
 
     
