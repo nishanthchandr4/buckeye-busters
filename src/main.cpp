@@ -565,12 +565,14 @@ void ERCMain()
     arm_servo.SetDegree(82);
     Sleep(0.5);
     arm_servo.SetDegree(0);
+
+    check_y(48.95, PLUS);
     turn_left(20, 112);
     
     move_forward(-40, 170);
+    
     move_forward(60, 300);
     check_x(17.3, PLUS);
-    check_y(48.95, PLUS);
     check_heading(354);
 
     turn_left(20, 10);
