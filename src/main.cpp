@@ -490,7 +490,7 @@ void ERCMain()
     turn_left(20, 37);
     move_forward(40, 120);
 
-    move_forward(-40, 95);
+    move_forward(-40, 99);
     //move_forward(-20, 110);
     turn_left(20, 112);
     //check_x(18.05, PLUS);
@@ -556,22 +556,22 @@ void ERCMain()
     move_forward(20, 65);
     turn_right(20, 98);
     
-    
-    move_forward(50, 360);
+    move_forward_with_applebuckey(40, 780, 1.2);
+    /*move_forward(50, 320);
     turn_left(40, 20);
     move_forward(40, 480);
-
+*/
     move_forward(-20, 60);
     arm_servo.SetDegree(82);
     Sleep(0.5);
     arm_servo.SetDegree(0);
     turn_left(20, 112);
     
-    move_forward(-20, 170);
+    move_forward(-40, 170);
     move_forward(60, 300);
-    check_x(15.49, PLUS);
-    check_y(50.45, PLUS);
-    check_heading(355);
+    check_x(17.3, PLUS);
+    check_y(48.95, PLUS);
+    check_heading(354);
 
     turn_left(20, 10);
     move_forward(40, 120);
