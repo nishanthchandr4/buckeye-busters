@@ -440,7 +440,7 @@ void ERCMain()
         LCD.WriteLine( RCS.CurrentRegionLetter() );
         Sleep( 0.5 );
     } */   
-    //RCS.GetLever();
+    RCS.GetLever();
     while (cds_cell.Value() > 1.2) {
         // waiting for start light to turn on
     } 
@@ -613,10 +613,24 @@ void ERCMain()
    
     move_forward(-20, 80);
     arm_servo.SetDegree(0); //arm in up position
-    turn_right(20, 80);
-    move_forward(20, 110);
+    if (RCS.GetLever() == 1){
+        turn_right(20, 80);
+        move_forward(20, 110);
     //turn_left(20, 5);
-    move_forward(20, 40);
+        move_forward(20, 40);
+    }
+    if (RCS.GetLever() == 0){
+        turn_right(20, 80);
+        move_forward(20, 110);
+        turn_left(20, 15);
+        move_forward(20, 40);
+    }
+    if (RCS.GetLever() == 2){
+        move_forward(-20, 60);
+        turn_right(20, 80);
+        move_forward(20, 110);
+        move_forward(20, 40);
+    }
     arm_servo.SetDegree(100); //arm in down position
     Sleep(5);
     move_forward(-20, 120);
