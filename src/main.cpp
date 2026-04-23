@@ -308,10 +308,10 @@ void check_x(float x_coordinate, int orientation)
     
 
     RCSPose* pose = RCS.RequestPosition();
+    int currentCalls = RCS.RequestsRemaining();
 
     // Check if receiving proper RCS coordinates and whether the robot is within an acceptable range
-    for (int i = 0; i < 10; i++) {
-        if( pose->x != -1 && (pose->x < x_coordinate - 1 || pose->x > x_coordinate + 1))
+    while( pose->x != -1 && (pose->x < x_coordinate - 0.5 || pose->x > x_coordinate + 0.5) && currentCalls - RCS.RequestsRemaining() <= 10)
         {
             if(pose->x < x_coordinate - 1)
             {
@@ -326,9 +326,9 @@ void check_x(float x_coordinate, int orientation)
             Sleep(RCS_WAIT_TIME_IN_SEC);
 
             pose = RCS.RequestPosition();
-        }
+    }
 }
-}
+
  
 
 /* 
@@ -344,32 +344,33 @@ void check_y(float y_coordinate, int orientation)
     RCSPose* pose = RCS.RequestPosition();
 
     // Check if receiving proper RCS coordinates and whether the robot is within an acceptable range
-    for (int i = 0; i < 10; i++) {
-        while( pose->y != -1 && (pose->y < y_coordinate - 1 || pose->y > y_coordinate + 1))
+    int currentCalls = RCS.RequestsRemaining();
+    while( pose->y != -1 && (pose->y < y_coordinate - 0.5 || pose->y > y_coordinate + 0.5 ) && currentCalls - RCS.RequestsRemaining() <= 10)
+    {
+        if(pose->y < y_coordinate - 1)
         {
-            if(pose->y < y_coordinate - 1)
-            {
-                // Pulse the motors for a short duration in the correct direction
-                pulse_forward(power, PULSE_TIME);
-            }
-            else if(pose->y > y_coordinate + 1)
-            {
-                // Pulse the motors for a short duration in the correct direction
-            pulse_forward(-power, PULSE_TIME);
-            }
-            Sleep(RCS_WAIT_TIME_IN_SEC);
-            
-            pose = RCS.RequestPosition();
+            // Pulse the motors for a short duration in the correct direction
+            pulse_forward(power, PULSE_TIME);
         }
-    }   
+        else if(pose->y > y_coordinate + 1)
+        {
+            // Pulse the motors for a short duration in the correct direction
+        pulse_forward(-power, PULSE_TIME);
+        }
+        Sleep(RCS_WAIT_TIME_IN_SEC);
+        
+        pose = RCS.RequestPosition();
+    }
+       
 }
 
 /* 
  * Use RCS to move to the desired heading
  */
- void check_heading(float heading)
+ void check_heading(float heading, float accuracy, int calls)
 {
     RCSPose* pose = RCS.RequestPosition();
+    int currentCalls = RCS.RequestsRemaining();
 
     // Wait until a valid heading is received
     while(pose->heading == -1)
@@ -384,7 +385,7 @@ void check_y(float y_coordinate, int orientation)
     if(diff < -180) diff += 360;
 
     // Use diff instead of raw heading comparison
-    while(pose->heading != -1 && fabs(diff) > 2)
+    while(pose->heading != -1 && fabs(diff) > accuracy && currentCalls - RCS.RequestsRemaining() <= calls)
     {
         if(diff > 0)
         {
@@ -474,36 +475,40 @@ void ERCMain()
     turn_left(20, 85);
     move_forward(40, 125);
     // allign with window
-    turn_right(20, 72);
-    move_forward(20, 96);
-    // open window
-    turn_right(50, 100);
-    // back up and move forward to get on other side
-    /*move_forward(-20, 30);
-    turn_right(20, 5);
-    move_forward(20, 26);
-    //close window
-    turn_left(50, 90);
+    turn_right(20, 68);
+    move_forward(20, 76);
     
-    */arm_servo.SetDegree(0);
+    
+
+
+    turn_right(50, 120);
+    
+    
+    arm_servo.SetDegree(0);
+
     move_forward(-20, 60);
     turn_left(20, 37);
-    move_forward(40, 120);
+    move_forward(40, 135);
 
     move_forward(-40, 99);
-    //move_forward(-20, 110);
+    
+    
     turn_left(20, 112);
-    //check_x(18.05, PLUS);
+    
     move_forward(-40, 20);
-    check_heading(359);
-    check_x(19.45, PLUS);
-    check_heading(359);
+
     
-    //move_forward(20, 120);
+        check_heading(358, 0.67, 10);
+        check_x(19.45, PLUS);
+        check_heading(358, 0.67, 10);
     
-    move_forward(-40, 80);
-    arm_servo.SetDegree(82);
-    move_forward(25, 160);
+
+    
+    move_forward(-30, 80);
+    arm_servo.SetDegree(90);
+    move_forward(20, 130);
+    
+   
     Sleep(.5);
     arm_servo.SetDegree(5);
     move_forward(-20, 80);
@@ -556,43 +561,39 @@ void ERCMain()
     move_forward(20, 65);
     turn_right(20, 98);
     
-    move_forward_with_applebuckey(40, 780, 1.2);
+    
+    move_forward_with_applebuckey(80, 680, 1.0);
     /*move_forward(50, 320);
     turn_left(40, 20);
     move_forward(40, 480);
 */
     move_forward(-20, 60);
-    arm_servo.SetDegree(82);
+    arm_servo.SetDegree(86);
+
     Sleep(0.5);
     arm_servo.SetDegree(0);
 
-    check_y(48.95, PLUS);
+
     turn_left(20, 112);
     
-    move_forward(-40, 170);
+    move_forward(-40, 190);
     
     move_forward(60, 300);
-    check_x(17.3, PLUS);
-    check_heading(354);
 
-    turn_left(20, 10);
-    move_forward(40, 120);
+    check_heading(355.0, 1.0, 10.0);
+
+
+    move_forward(40, 140);
  
 
 
    
-    
-
-    /*follow_optosensor();
-    LCD.Write("finished following optosensor");
-    move_forward(40, 139);
 
     Sleep(2); 
     
-
+/* 
     float cdsValue = cds_cell.Value();
-    LCD.Write("cds value: ");
-    LCD.Write(cdsValue);
+;
 
     if(cdsValue < 0.48) { //red light
         LCD.Write("red light: ");
@@ -608,9 +609,9 @@ void ERCMain()
         move_forward(40, 20);
         turn_right(20, 219);
         move_forward(40, 244);
-    } 
-    arm_servo.SetDegree(25); //arm in up position
-    */move_forward(-20, 80);
+    }  */
+   
+    move_forward(-20, 80);
     arm_servo.SetDegree(0); //arm in up position
     turn_right(20, 80);
     move_forward(20, 110);
@@ -631,145 +632,9 @@ void ERCMain()
     move_forward(40, 260);
     move_forward(-40, 25);
     turn_right(40, 107);
-    move_forward(40, 760);
+    move_forward(40, 800);
 
-    
-    /*turn_left(40,112);
-    move_forward(20, 60);
-    turn_right(40, 112);
-    //check_heading(265);
-    //heck_x(29.93, PLUS);
-    //check_y(43.25, PLUS);
-    turn_right(40, 50);
-    //turn_left(40, 30);
-    move_forward(20, 80);
-    */
-   /*  Sleep(1);
-    arm_servo.SetDegree(79); //arm in down position
-    Sleep(0.5); */
-
-    //move_forward(-40, 50);
-    // ─── NAVIGATE TO RAMP ───────────────────────────────────────────────────
-    /* arm_servo.SetDegree(0); //arm in up position
-    move_forward(40, 460); //move forward to the line following
-    move_forward(-40, 100); //move back a little bit to make sure optosensors can read line
-    //follow_optosensor(5.0);
-    //arm_servo.SetDegree(79); //set arm to down position getting ready to pick up
-    turn_left(20, 51);
-    move_forward(-40, 100);
-    arm_servo.SetDegree(79); //arm in down position
-    Sleep(0.5);
-    move_forward(20, 148);
-    Sleep(0.5);
-    //turn_left(20, 20);
-    /*for (int i = 0; i < 5; i++) {
-        arm_servo.SetDegree(79);
-        Sleep(0.5);
-    }*/
-    /*arm_servo.SetDegree(25); //arm in up position
-    //turn_right(-20, 40);
-    move_forward(-20, 80);
-    turn_right(20, 30);
-    move_forward(-40, 320);
-    turn_left(20, 15);
-    move_forward(-40, 260);
-
-
-    // off wall to table
-    move_forward(20, 43);
-    turn_right(20, 90);
-    turn_left(40, 25);
-    move_forward(20, 60);
-    turn_right(40, 30);
-    move_forward(60, 520);
-    Sleep(0.5);
-    turn_left(40, 15);
-    move_forward(20, 100);
-    
-    Sleep(1);
-    arm_servo.SetDegree(79); //arm in down position
-    Sleep(0.5);
-    move_forward(-40, 100);
-    turn_left(20, 90);
-    move_forward(40, 380);
-    turn_right(20,45);
-    arm_servo.SetDegree(25); //arm in up position
-    //move_forward(40, 200);
-    arm_servo.SetDegree(79); //arm in down position
-    move_forward(-40, 100);
-    move_forward(40, 100);
-    arm_servo.SetDegree(25); //arm in up position
-    Sleep(0.5);
-
-    /* if (RCS.GetLever() == 0) { //left lever
-        move_forward(40, 380);
-        turn_right(20, 45);
-        check_heading(lever_heading);
-    } else if (RCS.GetLever() == 1) { //middle lever
-        move_forward(40, 280);
-        turn_right(20, 45);
-        check_heading(lever_heading);
-
-    } else if (RCS.GetLever() == 2) { //right lever
-        move_forward(40, 160);
-        turn_right(20, 45);
-        check_heading(lever_heading);
-    }
-
-
-*/
-
-
-/*
-
-//rotate before window
-    /* turn_left(20, 437);
-    move_forward(-40, 300);
-    Sleep(2);
-    move_forward(30, 1000);
-    move_forward(-30, 500);
-*/
- 
- 
-
-    
-   /*  follow_optosensor();
-    LCD.Write("finished following optosensor");
-    move_forward(40, 139);
-
-    Sleep(2); 
-    
-
-    float cdsValue = cds_cell.Value();
-    LCD.Write("cds value: ");
-    LCD.Write(cdsValue);
-
-    if(cdsValue < 0.48) { //red light
-        LCD.Write("red light: ");
-        LCD.Write(cdsValue);
-        turn_right(20,219);
-        move_forward(40, 50);
-        turn_left(20, 205);
-        move_forward(40, 244);
-    } else if(cds_cell.Value() > 0.48 && cds_cell.Value() < 1.0) { //blue light
-        LCD.Write("blue light: ");
-        LCD.Write(cdsValue);
-        turn_left(20, 219);
-        move_forward(40, 20);
-        turn_right(20, 219);
-        move_forward(40, 244);
-    } 
-    move_forward(-40, 1061);
-    move_forward(40, 60);
-    turn_left(40, 490);
-    //turn_right(20, 219);
-    //move forwARD
-    //MOVERIGHT
-    move_forward(80, 2100);
-    turn_left(100, 200);
-    
-  */
-    
+  
   
     
     
