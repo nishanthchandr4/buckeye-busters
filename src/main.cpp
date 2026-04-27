@@ -9,14 +9,6 @@
 #include <FEHRCS.h>
 #include <FEHServo.h>
 
-//250 counts at 12.5 at 40% motor percent
-//1 encoder count per degree for turning
-
-// Declare things like Motors, Servos, etc. here
-// For example:
-// FEHMotor leftMotor(FEHMotor::Motor0, 6.0);
-// FEHServo servo(FEHServo::Servo0);
-
 // Declarations for motor encoders
 DigitalEncoder right_encoder (FEHIO:: Pin13);
 DigitalEncoder left_encoder (FEHIO:: Pin14);
@@ -38,98 +30,10 @@ FEHServo arm_servo(FEHServo::Servo0);
 FEHServo bin_servo(FEHServo::Servo1);
 
 
-enum LineStates {
-    MIDDLE,
-    RIGHT,
-    LEFT
-};
-
-void follow_optosensor()
-{
-
-    LineStates state = MIDDLE;
-    float timeNow = TimeNow();
-    
-    while (true) {
-
-        bool rightOnTape  = right_opto.Value()  > 4.0;
-        bool leftOnTape   = left_opto.Value()   > 4.0;
-        bool middleOnTape = middle_opto.Value() > 4.0;
-
-        if (rightOnTape && leftOnTape && middleOnTape) {
-            right_motor.Stop();
-            left_motor.Stop();
-            return;
-        }
-
-        switch (state) {
-
-            case MIDDLE:
-                right_motor.SetPercent(20);
-                left_motor.SetPercent(20);
-
-                if (right_opto.Value() > 3.6) {
-                    state = RIGHT;
-                } else if (left_opto.Value() > 3.6) {
-                    state = LEFT;
-                }
-                break;
-
-            case RIGHT:
-                right_motor.SetPercent(5);
-                left_motor.SetPercent(30);
-
-                if (right_opto.Value() < 4.0) {
-                    state = MIDDLE;
-                }
-                break;
-
-            case LEFT:
-                right_motor.SetPercent(30);
-                left_motor.SetPercent(5);
-
-                if (left_opto.Value() < 4.0) {
-                    state = MIDDLE;
-                }
-                break;
-
-            default:
-                right_motor.Stop();
-                left_motor.Stop();
-                break;
-        }
-        Sleep(0.02);
-
-    }
-
-    right_motor.Stop();
-    left_motor.Stop();
-}
-
-void move_forward_with_applebuckey(int percent, int counts, float right_increase) //using encoders
-{
-    int rightPercent = right_increase * percent;
-    int leftPercent = percent;
-    //Reset encoder counts
-    right_encoder.ResetCounts();
-    left_encoder.ResetCounts();
-
-    //Set both motors to desired percent
-    right_motor.SetPercent(0);
-    left_motor.SetPercent(0);
-    right_motor.SetPercent(rightPercent);
-    left_motor.SetPercent(leftPercent);
-
-    //While the average of the left and right encoder is less than counts,
-    //keep running motors
-    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts){     
-    } 
-        right_motor.Stop();
-        left_motor.Stop();
-    }
 
 //input a negative percent if you want to move backwards
-void move_forward(int percent, int counts) //using encoders
+//counts: is the distance to move forwards using shaft encoder
+void move_forward(int percent, int counts) 
 {
     int rightPercent = percent;
     int leftPercent = percent;
@@ -143,38 +47,17 @@ void move_forward(int percent, int counts) //using encoders
     right_motor.SetPercent(rightPercent);
     left_motor.SetPercent(leftPercent);
 
-    //While the average of the left and right encoder is less than counts,
-    //keep running motors
-    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts)
-    {
-         /*if(left_encoder.Counts() > right_encoder.Counts()) {
-            if (rightPercent<=80)
-            {
-                rightPercent+=5;
-                leftPercent -=5;
-                right_motor.SetPercent(rightPercent);
-                left_motor.SetPercent(leftPercent);
-            }
 
-        } else if (right_encoder.Counts() > left_encoder.Counts()) {
-            if (leftPercent<=80)
-            {
-                rightPercent+=5;
-                leftPercent -=5;
-                right_motor.SetPercent(rightPercent);
-                left_motor.SetPercent(leftPercent);
-            }*/
-        } 
-        right_motor.Stop();
-        left_motor.Stop();
-    }
+    //keep motors on while there are remaining encoder counts
+    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts){} 
 
-    //Turn off motors
-    //right_motor.Stop();
-    //left_motor.Stop();
-//}
+    //stop motors
+    right_motor.Stop();
+    left_motor.Stop();
+}
 
-void turn_right(int percent, int counts) //using encoders
+//percent is motor percent and counts is the number of encoder counts to turn
+void turn_right(int percent, int counts) 
 {
     right_motor.SetPercent(0);
     left_motor.SetPercent(0);
@@ -186,10 +69,9 @@ void turn_right(int percent, int counts) //using encoders
     //Set both motors to desired percent
     right_motor.SetPercent(-1 * percent);
     left_motor.SetPercent(percent);
-    //hint: set right motor backwards, left motor forwards
+    
 
-    //<ADD CODE HERE>
-    //While the average of the left and right encoder is less than counts,
+    //keep motors on while there are remaining encoder counts
     while((left_encoder.Counts() + right_encoder.Counts() / 2.0) < counts);
 
     //Turn off motors
@@ -197,7 +79,8 @@ void turn_right(int percent, int counts) //using encoders
     left_motor.Stop();
 }
 
-void turn_left(int percent, int counts) //using encoders
+//percent is motor percent and counts is the number of encoder counts to turn
+void turn_left(int percent, int counts) 
 {
     right_motor.SetPercent(0);
     left_motor.SetPercent(0);
@@ -208,6 +91,7 @@ void turn_left(int percent, int counts) //using encoders
     right_motor.SetPercent(percent);
     left_motor.SetPercent(-1 * percent);
 
+    //keep motors on while there are remaining encoder counts
     while((left_encoder.Counts() + right_encoder.Counts() / 2.0) < counts);
 
     //Turn off motors
@@ -216,18 +100,6 @@ void turn_left(int percent, int counts) //using encoders
     left_motor.Stop();
 }
 
-
-void test1()
-{
-    //move
-        move_forward(40, 1285); 
-}
-void test2()
-{
-    move_forward(40, 1200);
-    //turn_right(20, 850);
-    move_forward(-40, 1100);
-}
  
 #define PULSE_POWER 15
 #define PULSE_TIME 0.1
@@ -238,6 +110,10 @@ void test2()
 #define PLUS 0
 #define MINUS 1
 
+
+/*
+ * Move forward using shaft encoders where percent is the motor percent and counts is the distance to travel
+ */
 
 void pulse_forward(int percent, float seconds) 
 {
@@ -253,54 +129,11 @@ void pulse_forward(int percent, float seconds)
     left_motor.Stop();
 }
 
-/*
- * Pulse counterclockwise a short distance using time
- */
-
  
-void pulse_counterclockwise(int percent, float seconds) 
-{
-    // Set both motors to desired percent
-    right_motor.SetPercent(percent);
-    left_motor.SetPercent(-percent);
-
-    // Wait for the correct number of seconds
-    Sleep(seconds);
-
-    // Turn off motors
-    right_motor.Stop();
-    left_motor.Stop();
-}
-
-/*
- * Move forward using shaft encoders where percent is the motor percent and counts is the distance to travel
- */
-
-
-/*
- * Turn counterclockwise using shaft encoders where percent is the motor percent and counts is the distance to travel
- */
-
-
-void turn_counterclockwise(int percent, int counts) 
-{
-    right_encoder.ResetCounts();
-    left_encoder.ResetCounts();
-
-    right_motor.SetPercent(percent);
-    left_motor.SetPercent(-percent);
-
-    while(left_encoder.Counts() < counts);  // ONE encoder only
-
-    right_motor.Stop();
-    left_motor.Stop();
-}
-
 /* 
  * Use RCS to move to the desired x_coordinate based on the orientation of the AruCo code
  */
 
- 
 void check_x(float x_coordinate, int orientation)
 {
     // Determine the direction of the motors based on the orientation of the AruCo code 
@@ -331,38 +164,7 @@ void check_x(float x_coordinate, int orientation)
 
  
 
-/* 
- * Use RCS to move to the desired y_coordinate based on the orientation of the QR code
- */
- 
-void check_y(float y_coordinate, int orientation)
-{
-    // Determine the direction of the motors based on the orientation of the QR code
-    int power = PULSE_POWER;
-    
 
-    RCSPose* pose = RCS.RequestPosition();
-
-    // Check if receiving proper RCS coordinates and whether the robot is within an acceptable range
-    int currentCalls = RCS.RequestsRemaining();
-    while( pose->y != -1 && (pose->y < y_coordinate - 0.5 || pose->y > y_coordinate + 0.5 ) && currentCalls - RCS.RequestsRemaining() <= 10)
-    {
-        if(pose->y < y_coordinate - 1)
-        {
-            // Pulse the motors for a short duration in the correct direction
-            pulse_forward(power, PULSE_TIME);
-        }
-        else if(pose->y > y_coordinate + 1)
-        {
-            // Pulse the motors for a short duration in the correct direction
-        pulse_forward(-power, PULSE_TIME);
-        }
-        Sleep(RCS_WAIT_TIME_IN_SEC);
-        
-        pose = RCS.RequestPosition();
-    }
-       
-}
 
 /* 
  * Use RCS to move to the desired heading
@@ -422,40 +224,23 @@ void check_y(float y_coordinate, int orientation)
 void ERCMain()
 {
 
-    //TestGUI();
-    
-    //RCS.GetLever();
-    //int lever_heading = 100;
-    // ─── WAIT FOR START LIGHT ───────────────────────────────────────────────
-    /*while (cds_cell.Value() > 1.2) {
-        // waiting for start light to turn on
-    } 
-    // ─── HIT START BUTTON ─────────────────────────────────────────────────── 
-    */
-   //temporary hit the start button 
+    // Initialize RCS and wait for start light
     RCS.InitializeTouchMenu("1130D3UAI");
-    /*while(true)
-    {
-        // get the current course number and display it to the screen
-        LCD.WriteLine( RCS.CurrentRegionLetter() );
-        Sleep( 0.5 );
-    } */   
-    //RCS.GetLever();
+      
+    // waiting for start light to turn on
     while (cds_cell.Value() > 1.2) {
-        // waiting for start light to turn on
     } 
-    move_forward(-40, 50);  // reverse into start button
-    arm_servo.SetDegree(0); //arm in up position
-
-   
-    //move_forward(40, 50);   // move back forward
-
     
-        //Composter Task
-    
-    //turn left towards composter 
-    turn_left(20, 80);      // turn left to be parallel with line
-    move_forward(40, 215);   // move forward to composter
+    // reverse into start button
+    move_forward(-40, 50);  
+    //arm in up position
+    arm_servo.SetDegree(0); 
+
+   //turn and move towards composter
+    turn_left(20, 80);      
+    move_forward(40, 215);   
+
+    //rotate composter bin clockwise and counter-clockwise
     float time = TimeNow();
     bin_servo.SetDegree(130);
     while (TimeNow() - time < 1.5);
@@ -463,176 +248,111 @@ void ERCMain()
     while (TimeNow() - time < 3);
     bin_servo.SetDegree(90);
 
-    /*
-        Move to apple  Task
-    */
+    
+    //move towards window
     move_forward(-40, 40);
     bin_servo.Off();
-    turn_right(20, 118);
+    turn_right(20, 115);
     move_forward(40,199);
+    //set arm to correct position to open window
     arm_servo.SetDegree(47);
-    // turn left towards bucket/window
     turn_left(20, 85);
-    move_forward(40, 125);
-    // allign with window
-    turn_right(20, 68);
-    move_forward(20, 76);
-    
-    
+    move_forward(40, 110);
+    turn_right(20, 62);
 
+    //align with window handle
+    check_heading(270, 0.8, 5);
 
-    turn_right(50, 120);
+    //move into position and move open the window
+    move_forward(20, 80);
+    turn_right(90, 124);
     
-    
+    //set arm back to default position
     arm_servo.SetDegree(0);
 
+    //realign with wall under window
     move_forward(-20, 60);
-    turn_left(20, 37);
-    move_forward(40, 135);
+    turn_left(20, 35);
+    move_forward(40, 130);
 
+    //move towards apple bucket
     move_forward(-40, 99);
-    
-    
     turn_left(20, 112);
-    
     move_forward(-40, 20);
 
-    
-        check_heading(358, 0.67, 10);
-        check_x(19.45, PLUS);
-        check_heading(358, 0.67, 10);
+    //align with apple bucket
+    check_heading(359, 0.67, 10);
+    check_x(19.45, PLUS);
+    check_heading(359, 0.67, 10);
     
 
-    
+    //move towards apple bucket to remove from tree trunk
     move_forward(-30, 80);
-    arm_servo.SetDegree(90);
-    move_forward(20, 130);
+    arm_servo.SetDegree(93);
+    move_forward(40, 130);
     
    
     Sleep(.5);
-    arm_servo.SetDegree(5);
+    
+    //move towards opposite wall to re-align before moving up ramp
     move_forward(-20, 80);
+    arm_servo.SetDegree(5);
     turn_right(20, 38);
     move_forward(-40, 320);
     turn_left(20, 36);
     move_forward(-40, 140);
-    /*turn_left(20, 70);
-    move_forward(-40, 75);
-    //move_forward(-40, 155);
-    turn_left(20, 61);
-    move_forward(-40, 120);
-    //check_heading(1);
-    //check_y(19.57, PLUS);
-    //check_x(18.05, PLUS);
-    arm_servo.SetDegree(80);
-    move_forward(25, 140);
-    
-    Sleep(.5);
-    arm_servo.SetDegree(25);
-    move_forward(-20, 80);
-    turn_right(20, 30);
-    move_forward(-40, 320);
-    turn_left(20, 15);
-    move_forward(-40, 140);
-*/
-    /*check_heading(1);
-
-    check_y(19.57, PLUS);
-    check_x(18.05, PLUS);
-    
-
-    arm_servo.SetDegree(82);
-    move_forward(25, 65);
-    Sleep(.5);
-    arm_servo.SetDegree(25);
-    */
-    
-    //turn_right(-20, 40);
-    // to wall beside ramp
-    /*move_forward(-20, 80);
-    turn_right(40, 50);
-    move_forward(-40, 360);
-    turn_left(40, 25);
-    move_forward(-40, 220);
-    */
-
-    // off wall to table
-    //move_forward(20, 43);
     move_forward(20, 65);
     turn_right(20, 98);
     
     
-    move_forward_with_applebuckey(80, 680, 1.0);
-    /*move_forward(50, 320);
-    turn_left(40, 20);
-    move_forward(40, 480);
-*/
-    move_forward(-20, 60);
-    arm_servo.SetDegree(86);
-
+    //go up the ramp and stop at the table
+    move_forward(80, 760);
+    move_forward(-20, 60); 
     Sleep(0.5);
+    //reset arm to default position if not done already
     arm_servo.SetDegree(0);
 
-
+    //turn left and re-align with wall before going to humidifier buttons
     turn_left(20, 112);
-    
     move_forward(-40, 190);
-    
-    move_forward(60, 300);
 
+    //move forward to humidifier buttons
+    move_forward(60, 300);
+    
+    //check heading to ensure bumper will hit humidifier button
     check_heading(355.0, 1.0, 10.0);
 
-
-    move_forward(40, 140);
+    //press the humidifier button
+    move_forward(40, 170);
  
-
-
-   
-
     Sleep(2); 
     
-/* 
-    float cdsValue = cds_cell.Value();
-;
 
-    if(cdsValue < 0.48) { //red light
-        LCD.Write("red light: ");
-        LCD.Write(cdsValue);
-        turn_right(20,219);
-        move_forward(40, 50);
-        turn_left(20, 205);
-        move_forward(40, 244);
-    } else if(cds_cell.Value() > 0.48 && cds_cell.Value() < 1.0) { //blue light
-        LCD.Write("blue light: ");
-        LCD.Write(cdsValue);
-        turn_left(20, 219);
-        move_forward(40, 20);
-        turn_right(20, 219);
-        move_forward(40, 244);
-    }  */
-   
+   //move back and move towards lever task
     move_forward(-20, 80);
-    arm_servo.SetDegree(0); //arm in up position
+    //arm in up position
+    arm_servo.SetDegree(0); 
     turn_right(20, 80);
     move_forward(20, 110);
-    //turn_left(20, 5);
     move_forward(20, 40);
-    arm_servo.SetDegree(100); //arm in down position
+
+    //arm in down position to flip lever down
+    arm_servo.SetDegree(100); 
     Sleep(5);
-    move_forward(-20, 120);
-    //arm_servo.SetDegree(0); //arm in up position
-    move_forward(20, 120);
+
+    //move back to wall next to table before going down the ramp
+    move_forward(-40, 140);
+    //arm in up position
     arm_servo.SetDegree(0);
-    //arm_servo.SetDegree(100);
-    move_forward(-20, 140);
     turn_right(20, 20);
-    //move_forward(20, 120);
     move_forward(20, 40);
-    turn_right(20, 120);
-    move_forward(40, 260);
+    turn_right(20, 116);
+    move_forward(40, 275);
     move_forward(-40, 25);
-    turn_right(40, 107);
-    move_forward(40, 800);
+
+    //turn towards the ramp and go down towards the stop button
+    turn_right(40, 100);
+    move_forward(60, 1200);
 
   
   
