@@ -226,13 +226,8 @@ void ERCMain()
 
     // Initialize RCS and wait for start light
     RCS.InitializeTouchMenu("1130D3UAI");
-    /*while(true)
-    {
-        // get the current course number and display it to the screen
-        LCD.WriteLine( RCS.CurrentRegionLetter() );
-        Sleep( 0.5 );
-    } */   
-    //RCS.GetLever();
+      
+    // waiting for start light to turn on
     while (cds_cell.Value() > 1.2) {
     } 
     
@@ -349,8 +344,6 @@ void ERCMain()
     move_forward(-40, 140);
     //arm in up position
     arm_servo.SetDegree(0);
-    //arm_servo.SetDegree(100);
-    move_forward(-20, 140);
     turn_right(20, 20);
     move_forward(20, 40);
     turn_right(20, 116);
@@ -361,8 +354,6 @@ void ERCMain()
     turn_right(40, 100);
     move_forward(60, 1200);
 
-  
-  
-    
+
     
 }
